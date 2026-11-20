@@ -13,7 +13,7 @@ build: config
 	$(LB) build
 
 check:
-	../tools/check-live-config.sh
+	sh ../tools/check-live-config.sh
 
 clean:
 	$(LB) clean --purge
