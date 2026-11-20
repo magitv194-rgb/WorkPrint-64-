@@ -51,7 +51,7 @@ jobs:
       - name: Install QEMU, virtual display and OCR
         run: |
           sudo apt-get update
-          sudo apt-get install -y qemu-system-x86 xvfb tesseract-ocr tesseract-ocr-spa
+          sudo apt-get install -y qemu-system-x86 xvfb imagemagick tesseract-ocr tesseract-ocr-spa
 
       - name: Boot the live ISO and capture the guest display
         run: |
@@ -128,7 +128,9 @@ jobs:
           WORKPRINT_ISO="$iso" xvfb-run -a python3 /tmp/boot-check.py
           test -s evidence/early-screen.ppm
           test -s evidence/late-screen.ppm
-          tesseract evidence/late-screen.ppm evidence/desktop-ocr -l spa+eng
+          # Crop and enlarge desktop icons: full-screen OCR can miss highlighted labels.
+          magick evidence/late-screen.ppm -crop 180x450+0+0 +repage -resize 300% -colorspace Gray -contrast-stretch 1%x1% evidence/desktop-icons.png
+          tesseract evidence/desktop-icons.png evidence/desktop-ocr -l spa+eng --psm 3
           test -s evidence/desktop-ocr.txt
           grep -Eqi 'Carpeta' evidence/desktop-ocr.txt
           grep -Eqi 'Papelera' evidence/desktop-ocr.txt
