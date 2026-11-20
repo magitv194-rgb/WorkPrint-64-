@@ -22,7 +22,7 @@ See [live/README.md](live/README.md) for the image build instructions. The live-
 
 - [GitHub Actions ISO build history and artifacts](https://github.com/magitv194-rgb/WorkPrint-64-/actions/workflows/build-iso.yml)
 - [Validation plan](docs/TEST_PLAN.md)
-- [Printing architecture and current support status](docs/PRINTING.md)
+- [Desktop shortcuts and design status](docs/DESKTOP.md)\n- [Printing architecture and current support status](docs/PRINTING.md)
 
 The local configuration check is:
 
