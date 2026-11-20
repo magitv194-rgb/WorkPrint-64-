@@ -10,7 +10,7 @@ WorkPrint 64 follows a Linux-based architecture. The original freestanding x86_6
 - [x] Define an initial XFCE, Firefox ESR, CUPS and selected printer-driver package set.
 - [x] Add local shell/package-list validation.
 - [x] Add GitHub Actions checks for package resolution and live-build configuration generation.
-- [ ] Confirm the hosted workflow succeeds.
+- [x] Confirm hosted package/configuration checks succeed.\n- [x] Build and upload the first amd64 hybrid ISO in GitHub Actions.\n- [ ] Independently download and inspect the ISO artifact.
 
 ## Stage 1: build and boot the first image
 - [ ] Build the first hybrid ISO on a Debian 13 amd64 host.
