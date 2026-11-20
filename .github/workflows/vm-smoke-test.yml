@@ -78,11 +78,12 @@ jobs:
               time.sleep(2)
               try: sock.recv(4096)
               except OSError: pass
-          def type_into_window(search, value):
+          def type_into_window(search, value, by_class=False):
               # Target the actual XFCE dialog/terminal instead of whichever window
               # happens to be active under the virtual display.
+              selector = "--class" if by_class else "--name"
               result = subprocess.check_output(
-                  ["xdotool", "search", "--onlyvisible", "--name", search], text=True
+                  ["xdotool", "search", "--onlyvisible", selector, search], text=True
               ).strip().splitlines()
               if not result:
                   raise SystemExit(f"Could not find visible window: {search}")
@@ -126,11 +127,11 @@ jobs:
               monitor_command("screendump evidence/terminal-launch.ppm")
               # Report guest-level checks in the terminal for OCR verification.
               check = "printf 'NETWORK: '; if curl -fsSI --max-time 20 https://deb.debian.org >/dev/null; then echo PASS; else echo FAIL; fi; printf 'FIREFOX: '; firefox-esr --version 2>&1 | head -1; printf 'CUPS: '; if sudo -n systemctl start cups >/dev/null 2>&1 && lpstat -r 2>&1 | grep -qi 'scheduler is running'; then echo PASS; else echo FAIL; fi; sleep 30"
-              type_into_window("Terminal", check)
+              type_into_window("xfce4-terminal", check, by_class=True)
               time.sleep(40)
               monitor_command("screendump evidence/service-checks.ppm")
               # Separately launch the browser against a reachable HTTPS page.
-              type_into_window("Terminal", "firefox-esr --new-window https://example.com >/tmp/workprint-firefox.log 2>&1 &")
+              type_into_window("xfce4-terminal", "firefox-esr --new-window https://example.com >/tmp/workprint-firefox.log 2>&1 &", by_class=True)
               time.sleep(25)
               monitor_command("screendump evidence/firefox-screen.ppm")
               if proc.poll() is not None:
