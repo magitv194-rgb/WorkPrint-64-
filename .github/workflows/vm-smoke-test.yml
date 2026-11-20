@@ -17,7 +17,7 @@ jobs:
   qemu-live-boot:
     if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - name: Resolve successful ISO build
         id: build
@@ -51,9 +51,9 @@ jobs:
       - name: Install QEMU, virtual display and OCR
         run: |
           sudo apt-get update
-          sudo apt-get install -y qemu-system-x86 xvfb imagemagick tesseract-ocr tesseract-ocr-spa
+          sudo apt-get install -y qemu-system-x86 xvfb imagemagick tesseract-ocr tesseract-ocr-spa xdotool
 
-      - name: Boot the live ISO and capture the guest display
+      - name: Boot live desktop and exercise network, Firefox and CUPS
         run: |
           set -eu
           iso="$(find iso -maxdepth 1 -type f -name '*.iso' -print -quit)"
@@ -73,6 +73,14 @@ jobs:
           ]
           proc = subprocess.Popen(cmd)
           sock = None
+          def monitor_command(command):
+              sock.sendall((command + "\n").encode())
+              time.sleep(2)
+              try: sock.recv(4096)
+              except OSError: pass
+          def type_text(value):
+              subprocess.run(["xdotool", "type", "--clearmodifiers", "--delay", "1", value], check=True)
+              subprocess.run(["xdotool", "key", "Return"], check=True)
           try:
               deadline = time.time() + 45
               while time.time() < deadline:
@@ -90,51 +98,53 @@ jobs:
               if sock is None:
                   raise SystemExit("QEMU monitor did not become available")
               sock.settimeout(3)
-              try:
-                  sock.recv(4096)
-              except OSError:
-                  pass
+              try: sock.recv(4096)
+              except OSError: pass
               time.sleep(20)
-              sock.sendall(b"screendump evidence/early-screen.ppm\n")
-              time.sleep(2)
-              try:
-                  sock.recv(4096)
-              except OSError:
-                  pass
-              sock.sendall(b"sendkey ret\n")
-              time.sleep(2)
-              try:
-                  sock.recv(4096)
-              except OSError:
-                  pass
+              monitor_command("screendump evidence/early-screen.ppm")
+              monitor_command("sendkey ret")
               time.sleep(180)
-              sock.sendall(b"screendump evidence/late-screen.ppm\n")
-              time.sleep(2)
-              try:
-                  sock.recv(4096)
-              except OSError:
-                  pass
+              monitor_command("screendump evidence/late-screen.ppm")
+              # Open XFCE's application finder, then launch the terminal.
+              subprocess.run(["xdotool", "key", "alt+F2"], check=True)
+              time.sleep(3)
+              type_text("xfce4-terminal")
+              time.sleep(7)
+              # Report guest-level checks in the terminal for OCR verification.
+              check = "printf 'NETWORK: '; if curl -fsSI --max-time 20 https://deb.debian.org >/dev/null; then echo PASS; else echo FAIL; fi; printf 'FIREFOX: '; firefox-esr --version 2>&1 | head -1; printf 'CUPS: '; if sudo -n systemctl start cups >/dev/null 2>&1 && lpstat -r 2>&1 | grep -qi 'scheduler is running'; then echo PASS; else echo FAIL; fi; sleep 30"
+              type_text(check)
+              time.sleep(40)
+              monitor_command("screendump evidence/service-checks.ppm")
+              # Separately launch the browser against a reachable HTTPS page.
+              subprocess.run(["xdotool", "type", "--clearmodifiers", "--delay", "1",
+                               "firefox-esr --new-window https://example.com >/tmp/workprint-firefox.log 2>&1 &"], check=True)
+              subprocess.run(["xdotool", "key", "Return"], check=True)
+              time.sleep(25)
+              monitor_command("screendump evidence/firefox-screen.ppm")
               if proc.poll() is not None:
-                  raise SystemExit("QEMU exited during the live boot")
+                  raise SystemExit("QEMU exited during the live test")
           finally:
-              if sock:
-                  sock.close()
+              if sock: sock.close()
               proc.terminate()
-              try:
-                  proc.wait(timeout=10)
-              except subprocess.TimeoutExpired:
-                  proc.kill()
+              try: proc.wait(timeout=10)
+              except subprocess.TimeoutExpired: proc.kill()
           PY
           WORKPRINT_ISO="$iso" xvfb-run -a python3 /tmp/boot-check.py
           test -s evidence/early-screen.ppm
           test -s evidence/late-screen.ppm
-          # Crop and enlarge desktop icons: full-screen OCR can miss highlighted labels.
+          test -s evidence/service-checks.ppm
+          test -s evidence/firefox-screen.ppm
           magick evidence/late-screen.ppm -crop 180x450+0+0 +repage -resize 300% -colorspace Gray -contrast-stretch 1%x1% evidence/desktop-icons.png
           tesseract evidence/desktop-icons.png evidence/desktop-ocr -l spa+eng --psm 3
-          test -s evidence/desktop-ocr.txt
           grep -Eqi 'Carpeta' evidence/desktop-ocr.txt
           grep -Eqi 'Papelera' evidence/desktop-ocr.txt
-          echo "XFCE desktop evidence passed OCR checks."
+          tesseract evidence/service-checks.ppm evidence/service-checks-ocr -l eng --psm 6
+          grep -Eqi 'NETWORK:.*PASS' evidence/service-checks-ocr.txt
+          grep -Eqi 'FIREFOX:.*Mozilla Firefox' evidence/service-checks-ocr.txt
+          grep -Eqi 'CUPS:.*PASS' evidence/service-checks-ocr.txt
+          tesseract evidence/firefox-screen.ppm evidence/firefox-ocr -l eng --psm 11
+          grep -Eqi 'Example Domain' evidence/firefox-ocr.txt
+          echo "Desktop, guest network, Firefox and CUPS checks passed."
 
       - name: Upload VM boot evidence
         if: always()
