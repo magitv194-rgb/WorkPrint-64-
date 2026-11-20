@@ -11,7 +11,7 @@ A 64-bit Linux development environment is the supported build host for this earl
 - GCC and GNU binutils (a native x86_64 compiler is sufficient for this stage; a cross compiler can also be selected with Make variables);
 - GNU Make and Python 3;
 - xorriso for ISO creation;
-- a recent Limine binary release whose bootloader supports Limine protocol base revision 6.
+- the Limine host utility and BIOS/UEFI files from the same recent binary release, with protocol base revision 6 support.
 
 The kernel explicitly requests Limine base revision 6, the current non-deprecated revision in the upstream protocol. An older Limine binary may refuse to load it. Do not mix arbitrary Limine binaries from different releases.
 
