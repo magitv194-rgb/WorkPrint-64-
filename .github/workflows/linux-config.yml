@@ -21,10 +21,10 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends live-build ca-certificates
       - name: Check configuration scripts and package list
-        run: tools/check-live-config.sh
+        run: sh tools/check-live-config.sh
       - name: Resolve requested packages against Debian Trixie
         run: |
           packages="$(awk '!/^[[:space:]]*#/ && NF {print}' live/config/package-lists/workprint.list.chroot)"
           apt-get -s install $packages
       - name: Generate live-build configuration
-        run: tools/configure-live-build.sh
+        run: sh tools/configure-live-build.sh
