@@ -28,7 +28,7 @@ jobs:
           fi
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            live-build debootstrap xorriso squashfs-tools ca-certificates
+            live-build debootstrap xorriso squashfs-tools ca-certificates jq
       - name: Validate configuration
         run: |
           sh tools/check-live-config.sh
