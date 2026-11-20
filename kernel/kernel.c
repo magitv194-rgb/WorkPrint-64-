@@ -125,18 +125,23 @@ static void print_memory_map(void)
     struct limine_memmap_response *response = memmap_request.response;
 
     if (response == 0 || response->entries == 0) {
-        serial_write("Limine did not provide a memory map response.\\n");
+        serial_write("Limine did not provide a memory map response.\n");
+        return;
+    }
+
+    if (response->revision != 0) {
+        serial_write("Unsupported Limine memory map response revision.\n");
         return;
     }
 
     serial_write("Memory map entry count: 0x");
     serial_hex64(response->entry_count);
-    serial_write("\\n");
+    serial_write("\n");
 
     uint64_t count = response->entry_count;
     if (count > LIMINE_MEMMAP_MAX_PRINT) {
         count = LIMINE_MEMMAP_MAX_PRINT;
-        serial_write("Memory map output capped at 128 entries.\\n");
+        serial_write("Memory map output capped at 128 entries.\n");
     }
 
     uint64_t usable_bytes = 0;
@@ -161,7 +166,7 @@ static void print_memory_map(void)
         serial_write(")\\n");
 
         if (entry->length == 0 || entry->length > UINT64_MAX - entry->base) {
-            serial_write("  WARNING: invalid or overflowing memory range; excluded from totals.\\n");
+            serial_write("  WARNING: invalid or overflowing memory range; excluded from totals.\n");
             continue;
         }
 
@@ -177,13 +182,13 @@ static void print_memory_map(void)
 
     serial_write("Valid ranges inspected: 0x");
     serial_hex64(valid_ranges);
-    serial_write("\\nUsable memory reported: ");
+    serial_write("\nUsable memory reported: ");
     if (usable_total_overflow) {
-        serial_write("overflow (total not representable)\\n");
+        serial_write("overflow (total not representable)\n");
     } else {
         serial_write("0x");
         serial_hex64(usable_bytes);
-        serial_write(" bytes\\n");
+        serial_write(" bytes\n");
     }
 }
 
