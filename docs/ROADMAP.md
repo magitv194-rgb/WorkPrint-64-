@@ -5,14 +5,14 @@
 - [x] Add a minimal x86_64 entry point and serial diagnostics.
 - [x] Separate higher-half virtual addresses from low physical load addresses.
 - [x] Add Limine base revision 6 metadata, request delimiters, and memory-map request in a writable ELF segment.
-- [x] Add early-boot serial reporting for the Limine memory map (runtime verification in QEMU pending).
+- [x] Add early-boot serial reporting for the Limine memory map, including type labels, invalid-range checks, and a usable-memory total (runtime verification in QEMU pending).
 - [x] Compile the kernel ELF with GCC/binutils in a local Linux environment.
 - [x] Validate ELF64 format, entry point, load segments, Limine markers, base revision, and request-segment permissions with `tools/verify_elf.py`.
 - [ ] Confirm the GitHub Actions hosted run.
 - [ ] Build an ISO with matching, compatible Limine binaries and host utility.
 - [ ] Boot in QEMU and verify serial output.
 
-The kernel ELF and static validator have passed in a local Linux build environment. The GitHub Actions workflow has been updated to run the validator and publish the ELF artifact, but its hosted run has not yet been independently confirmed. The memory-map request and serial reporting are implemented but have not yet been observed at runtime. No Limine ISO or QEMU boot has been verified.
+The kernel C source, including the memory-map diagnostic changes, passed a local GCC syntax check with the project's freestanding warning settings. The earlier kernel ELF and static validator passed in a local Linux build environment. The GitHub Actions workflow has been updated to run the validator and publish the ELF artifact, but its hosted run has not yet been independently confirmed. The memory-map request and serial reporting are implemented but have not yet been observed at runtime. No Limine ISO or QEMU boot has been verified.
 
 ## Stage 1: hardware foundation
 - [ ] Validate memory-map responses in QEMU and reserve kernel/bootloader regions safely.
