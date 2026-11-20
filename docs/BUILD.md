@@ -37,9 +37,9 @@ make CC=x86_64-elf-gcc LD=x86_64-elf-ld AS=x86_64-elf-gcc
 
 The kernel is linked at the higher-half virtual address `0xffffffff80000000`, while its ELF load segments have physical load addresses beginning at 1 MiB. The linker script expresses this distinction with separate virtual and load addresses and emits separate executable, read-only, writable-request, and BSS load segments.
 
-The kernel includes the Limine request start/end markers, a base-revision-6 tag, and a memory-map request in a dedicated writable `.limine_requests` ELF load segment. At startup it checks the base revision and, if a memory-map response is available, prints each region's base, length, and type over COM1. The validator checks the ELF structure, load addresses, permissions, marker order, base-revision tag, and memory-map request. This is a static consistency check, not proof that a particular Limine binary will boot the kernel.
+The kernel includes the Limine request start/end markers, a base-revision-6 tag, and a memory-map request in a dedicated writable `.limine_requests` ELF load segment. At startup it checks the base revision, verifies that the memory-map response uses revision 0, and, when a response is available, prints each region's base, length, and type over COM1. It rejects zero-length and overflowing ranges from its diagnostic totals and caps printed entries at 128. The validator checks the ELF structure, load addresses, permissions, marker order, base-revision tag, and memory-map request. These checks are preliminary diagnostics, not a physical memory manager and not proof that a particular Limine binary will boot the kernel.
 
-The boot entry assumes the Limine loader has established the protocol execution environment. The kernel does not yet request or consume a memory map or framebuffer, establish its own page tables, or initialize memory management.
+The boot entry assumes the Limine loader has established the protocol execution environment. The kernel does not yet establish its own page tables, manage physical or virtual memory, or request a framebuffer.
 
 ## ISO image
 
