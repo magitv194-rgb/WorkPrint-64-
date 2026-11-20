@@ -77,12 +77,16 @@ base_revision = struct.pack("<QQQ", 0xf9562b2d5c95a6c8, 0x6a7b384944536bdc, 6)
 end_marker = struct.pack("<QQ", 0xadc0e0531bb10d03, 0x9572709f31764c62)
 if not (request_bytes.find(start_marker) < request_bytes.find(base_revision) < request_bytes.find(end_marker)):
     fail("Limine request delimiters or base revision 6 tag are missing or out of order")
+memmap_request_id = struct.pack("<QQQQQ", 0xc7b1dd30df4c8b88, 0x0a82e883a194f07b,
+                                0x67cf3d9d378a806f, 0xe304acdfc50c3c62, 0)
+if memmap_request_id not in request_bytes:
+    fail("Limine memory-map request is missing from the request section")
 
 if not any((flags & 2) and start <= request_address and
            request_address + request_size <= start + size
            for flags, start, _, size in loads):
     fail(".limine_requests is not covered by a writable PT_LOAD segment")
 
-print(f"ELF OK: entry=0x{entry:016x}; {len(loads)} load segments; Limine base revision 6 metadata OK")
+print(f"ELF OK: entry=0x{entry:016x}; {len(loads)} load segments; Limine base revision 6 and memory-map request OK")
 for flags, vaddr, paddr, memsz in loads:
     print(f"  VMA=0x{vaddr:016x} LMA=0x{paddr:08x} MEM=0x{memsz:x} FLAGS={flags}")
