@@ -8,10 +8,11 @@ SCRIPT="$ROOT/tools/configure-live-build.sh"
 test -s "$LIST"
 sh -n "$SCRIPT"
 
-# Package lists must contain one package name per non-empty, non-comment line.
-if grep -Ev '^[[:space:]]*($|#|[a-z0-9][a-z0-9+.-]*([[:space:]]+#.*)?$)' "$LIST"; then
-    echo "ERROR: invalid package-list line(s)" >&2
-    exit 1
-fi
+awk '
+    /^[[:space:]]*#/ || /^[[:space:]]*$/ { next }
+    /^[a-z0-9][a-z0-9+.-]*$/ { next }
+    { print "Invalid package-list entry at line " NR ": " $0; failed = 1 }
+    END { exit failed }
+' "$LIST"
 
 echo "WorkPrint live-build configuration checks passed."
