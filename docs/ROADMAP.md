@@ -9,13 +9,13 @@
 - [x] Compile the kernel ELF with GCC/binutils in a local Linux environment.
 - [x] Validate ELF64 format, entry point, load segments, Limine markers, base revision, and request-segment permissions with `tools/verify_elf.py`.
 - [ ] Confirm the GitHub Actions hosted run.
-- [ ] Build an ISO with a pinned compatible Limine release.
+- [ ] Build an ISO with matching, compatible Limine binaries and host utility.
 - [ ] Boot in QEMU and verify serial output.
 
 The kernel ELF and static validator have passed in a local Linux build environment. The GitHub Actions workflow has been updated to run the validator and publish the ELF artifact, but its hosted run has not yet been independently confirmed. The memory-map request and serial reporting are implemented but have not yet been observed at runtime. No Limine ISO or QEMU boot has been verified.
 
 ## Stage 1: hardware foundation
-- [ ] Request and parse the Limine memory map.
+- [ ] Validate memory-map responses in QEMU and reserve kernel/bootloader regions safely.
 - [ ] Physical and virtual memory management.
 - [ ] Interrupt descriptor table, exceptions and timer.
 - [ ] PCI enumeration.
