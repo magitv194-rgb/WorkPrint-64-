@@ -20,6 +20,14 @@
       "browser.sessionstore.interval": {
         "Value": 60000,
         "Status": "default"
+      },
+      "browser.sessionstore.restore_on_demand": {
+        "Value": true,
+        "Status": "default"
+      },
+      "browser.sessionstore.restore_pinned_tabs_on_demand": {
+        "Value": true,
+        "Status": "default"
       }
     }
   }

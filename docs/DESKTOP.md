@@ -21,6 +21,6 @@ The wallpaper and layout are an initial visual identity, not a pixel-perfect Win
 
 ## Performance constraints
 
-XFCE is chosen instead of a heavier desktop environment, but the 3 GB RAM target is still tight for a modern browser. Firefox ESR has conservative cache/session defaults. Idle memory, browser memory and responsiveness must be measured on the actual Lenovo before making performance claims.
+XFCE is chosen instead of a heavier desktop environment, but the 3 GB RAM target is still tight for a modern browser. Firefox ESR has a 32 MiB disk-cache limit, a reduced session-history viewer count, low-memory tab unloading and on-demand session restoration to avoid loading every restored tab at once. These settings reduce avoidable pressure but do not make modern websites lightweight. Idle memory, browser memory and responsiveness must be measured on the actual Lenovo before making performance claims.
 
 See [the validation plan](TEST_PLAN.md).

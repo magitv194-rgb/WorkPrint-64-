@@ -48,6 +48,11 @@ policies = policy.get("policies", {})
 for key in ("DisableTelemetry", "DisableFirefoxStudies", "DisablePocket"):
     if policies.get(key) is not True:
         raise SystemExit(f"Firefox policy {key} must be enabled")
+preferences = policies.get("Preferences", {})
+for key in ("browser.tabs.unloadOnLowMemory", "browser.sessionstore.restore_on_demand",
+            "browser.sessionstore.restore_pinned_tabs_on_demand"):
+    if preferences.get(key, {}).get("Value") is not True:
+        raise SystemExit(f"Firefox low-memory preference {key} must be enabled")
 
 launchers = {
     "live/config/includes.chroot/usr/share/applications/workprint-whatsapp.desktop":
