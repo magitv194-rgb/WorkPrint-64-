@@ -32,6 +32,12 @@ To select a cross toolchain, pass its executable names explicitly, for example:
 make CC=x86_64-elf-gcc LD=x86_64-elf-ld AS=x86_64-elf-gcc
 ```
 
+## Kernel memory layout
+
+The kernel is linked at the higher-half virtual address `0xffffffff80000000`, while its ELF load segments have physical load addresses beginning at 1 MiB. The linker script expresses this distinction with separate virtual and load addresses and emits explicit RX, R, and RW load segments. This is necessary for a higher-half kernel; a high virtual address must not accidentally become its physical load address.
+
+The current boot entry assumes that the Limine loader has established the execution environment required by the Limine protocol. The kernel does not yet request or consume boot information, establish its own page tables, or initialize memory management.
+
 ## ISO image
 
 Place all four required Limine release files in `limine/`:
@@ -52,6 +58,6 @@ The ISO recipe is an initial integration point and must be checked against the e
 ## Validation still required
 
 - Confirm compiler and linker availability.
-- Confirm ELF format, entry point and load segments.
+- Confirm ELF format, entry point, virtual addresses, physical load addresses, and load segments.
 - Verify Limine protocol handoff and serial output in QEMU.
 - Add automated checks before attempting real hardware.
