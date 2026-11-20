@@ -2,7 +2,7 @@
 
 WorkPrint 64 is a Linux-based operating-system project for modest x86_64 computers. Its goal is a lightweight, classic desktop inspired by Windows 7, with a modern browser for WhatsApp Web and a practical printing workflow.
 
-**Current status: first amd64 hybrid ISO built and uploaded as a development artifact; boot and hardware tests are still pending.** The image is based on Debian 13 (Trixie) and currently includes XFCE, LightDM, Firefox ESR, CUPS, IPP-USB and selected printer drivers. GitHub Actions validates package availability, builds the ISO, checks its boot catalog and publishes a SHA-256 checksum.
+**Current status: customized amd64 hybrid ISO built and uploaded as a development artifact; automated QEMU live-boot smoke testing is being added, while desktop and hardware tests remain pending.** The image is based on Debian 13 (Trixie) and currently includes XFCE, LightDM, Firefox ESR, CUPS, IPP-USB and selected printer drivers. GitHub Actions validates package availability, builds the ISO, checks its boot catalog and publishes a SHA-256 checksum.
 
 This is an early development image, not a finished or stable operating system.
 
