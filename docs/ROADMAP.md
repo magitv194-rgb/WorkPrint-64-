@@ -3,14 +3,19 @@
 ## Stage 0: repository and boot scaffold
 - [x] Establish project structure and goals.
 - [x] Add a minimal x86_64 entry point and serial diagnostics.
-- [x] Compile the kernel ELF with the documented GCC/binutils command.
-- [x] Validate ELF64 format, entry point, higher-half virtual addresses, low physical load addresses, and load-segment permissions with `tools/verify_elf.py`.
-- [ ] Boot in QEMU through Limine.
+- [x] Separate higher-half virtual addresses from low physical load addresses.
+- [x] Add Limine base revision 6 metadata and request delimiters in a writable ELF segment.
+- [x] Compile the kernel ELF with GCC/binutils in a local Linux environment.
+- [x] Validate ELF64 format, entry point, load segments, Limine markers, base revision, and request-segment permissions with `tools/verify_elf.py`.
+- [ ] Confirm the GitHub Actions hosted run.
+- [ ] Build an ISO with a pinned compatible Limine release.
+- [ ] Boot in QEMU and verify serial output.
 
-The kernel build and ELF layout checks have passed in a local Linux build environment. The GitHub Actions workflow now runs the same ELF validator, but its hosted run has not yet been independently confirmed. No Limine ISO or QEMU boot has been verified.
+The kernel ELF and static validator have passed in a local Linux build environment. The GitHub Actions workflow has been updated to run the validator, but its hosted run has not yet been independently confirmed. No Limine ISO or QEMU boot has been verified.
 
 ## Stage 1: hardware foundation
-- [ ] Memory map parsing and physical/virtual memory management.
+- [ ] Request and parse the Limine memory map.
+- [ ] Physical and virtual memory management.
 - [ ] Interrupt descriptor table, exceptions and timer.
 - [ ] PCI enumeration.
 - [ ] USB host controller support (xHCI, EHCI where needed).
