@@ -4,12 +4,13 @@ KERNEL := $(BUILD_DIR)/workprint.elf
 CC = gcc
 LD = ld
 AS = gcc
+PYTHON = python3
 LIMINE = limine
 CFLAGS := -std=gnu11 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -m64 -mno-red-zone -mcmodel=kernel -Wall -Wextra -Werror -O2 -Iinclude
 ASFLAGS := -c -m64 -ffreestanding -fno-pic -fno-pie -mno-red-zone
 LDFLAGS := -nostdlib -z max-page-size=0x1000 -T linker.ld
 
-.PHONY: all clean check-tools iso
+.PHONY: all clean check-tools validate iso
 all: $(KERNEL)
 
 $(BUILD_DIR):
@@ -28,6 +29,10 @@ check-tools:
 	@command -v $(CC) >/dev/null || (echo "Missing compiler: $(CC)"; exit 1)
 	@command -v $(LD) >/dev/null || (echo "Missing linker: $(LD)"; exit 1)
 	@command -v $(AS) >/dev/null || (echo "Missing assembler: $(AS)"; exit 1)
+	@command -v $(PYTHON) >/dev/null || (echo "Missing Python: $(PYTHON)"; exit 1)
+
+validate: $(KERNEL)
+	$(PYTHON) tools/verify_elf.py $(KERNEL)
 
 iso: $(KERNEL)
 	@for f in limine/limine-bios.sys limine/limine-bios-cd.bin limine/limine-uefi-cd.bin limine/BOOTX64.EFI; do test -f $$f || (echo "Missing $$f; see docs/BUILD.md"; exit 1); done
