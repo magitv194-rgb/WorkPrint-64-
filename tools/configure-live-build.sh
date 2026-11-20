@@ -15,5 +15,9 @@ lb config \
     --binary-images iso-hybrid \
     --archive-areas "main contrib non-free-firmware" \
     --debian-installer none \
-    --apt-recommends false \
+    --firmware-binary true \
+    --firmware-chroot true \
+    --iso-volume WORKPRINT_64 \
+    --image-name workprint-64 \
+    --memtest none \
     --bootappend-live "boot=live components username=workprint hostname=workprint locales=es_AR.UTF-8 keyboard-layouts=latam"
