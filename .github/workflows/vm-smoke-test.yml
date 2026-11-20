@@ -78,19 +78,38 @@ jobs:
               time.sleep(2)
               try: sock.recv(4096)
               except OSError: pass
-          def type_into_window(search, value, by_class=False):
-              # Target the actual XFCE dialog/terminal instead of whichever window
-              # happens to be active under the virtual display.
-              selector = "--class" if by_class else "--name"
-              result = subprocess.check_output(
-                  ["xdotool", "search", "--onlyvisible", selector, search], text=True
-              ).strip().splitlines()
-              if not result:
-                  raise SystemExit(f"Could not find visible window: {search}")
-              wid = result[-1]
+          def visible_windows():
+              result = subprocess.run(
+                  ["xdotool", "search", "--onlyvisible", "--name", ".*"],
+                  text=True, capture_output=True, check=False
+              )
+              return set(result.stdout.split())
+
+          def wait_for_new_window(previous, timeout=15):
+              deadline = time.time() + timeout
+              while time.time() < deadline:
+                  current = visible_windows() - previous
+                  if current:
+                      return sorted(current, key=int)[-1]
+                  time.sleep(0.5)
+              raise SystemExit("XFCE application finder did not open a new window")
+
+          def wait_for_terminal(timeout=20):
+              deadline = time.time() + timeout
+              while time.time() < deadline:
+                  result = subprocess.run(
+                      ["xdotool", "search", "--onlyvisible", "--class", "[Xx]fce4-terminal"],
+                      text=True, capture_output=True, check=False
+                  )
+                  ids = result.stdout.split()
+                  if ids:
+                      return ids[-1]
+                  time.sleep(0.5)
+              raise SystemExit("XFCE terminal window did not appear")
+
+          def type_into_window(wid, value):
               subprocess.run(["xdotool", "windowactivate", "--sync", wid], check=True)
               subprocess.run(["xdotool", "windowfocus", "--sync", wid], check=True)
-              subprocess.run(["xdotool", "key", "ctrl+a"], check=True)
               subprocess.run(["xdotool", "type", "--clearmodifiers", "--delay", "10", value], check=True)
               time.sleep(1)
               subprocess.run(["xdotool", "key", "Return"], check=True)
@@ -118,20 +137,24 @@ jobs:
               monitor_command("sendkey ret")
               time.sleep(180)
               monitor_command("screendump evidence/late-screen.ppm")
-              # Open XFCE's application finder, then launch the terminal.
+              # Open XFCE's application finder without relying on its translated title.
+              before = visible_windows()
               subprocess.run(["xdotool", "key", "alt+F2"], check=True)
-              time.sleep(3)
-              type_into_window("Buscador de aplicaciones", "xfce4-terminal")
-              time.sleep(10)
-              subprocess.run("xdotool getactivewindow getwindowname > evidence/terminal-window.txt 2>&1 || true", shell=True, check=False)
+              finder = wait_for_new_window(before)
+              type_into_window(finder, "xfce4-terminal")
+              terminal = wait_for_terminal()
+              with open("evidence/terminal-window.txt", "w") as out:
+                  out.write(subprocess.check_output(
+                      ["xdotool", "getwindowname", terminal], text=True
+                  ))
               monitor_command("screendump evidence/terminal-launch.ppm")
               # Report guest-level checks in the terminal for OCR verification.
               check = "printf 'NETWORK: '; if curl -fsSI --max-time 20 https://deb.debian.org >/dev/null; then echo PASS; else echo FAIL; fi; printf 'FIREFOX: '; firefox-esr --version 2>&1 | head -1; printf 'CUPS: '; if sudo -n systemctl start cups >/dev/null 2>&1 && lpstat -r 2>&1 | grep -qi 'scheduler is running'; then echo PASS; else echo FAIL; fi; sleep 30"
-              type_into_window("xfce4-terminal", check, by_class=True)
+              type_into_window(terminal, check)
               time.sleep(40)
               monitor_command("screendump evidence/service-checks.ppm")
               # Separately launch the browser against a reachable HTTPS page.
-              type_into_window("xfce4-terminal", "firefox-esr --new-window https://example.com >/tmp/workprint-firefox.log 2>&1 &", by_class=True)
+              type_into_window(terminal, "firefox-esr --new-window https://example.com >/tmp/workprint-firefox.log 2>&1 &")
               time.sleep(25)
               monitor_command("screendump evidence/firefox-screen.ppm")
               if proc.poll() is not None:
