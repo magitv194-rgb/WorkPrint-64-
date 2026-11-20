@@ -38,7 +38,8 @@ eog
 file-roller
 unzip
 
-# Printing stack
+# Printing stack and USB discovery
+usbutils
 cups
 cups-client
 cups-filters

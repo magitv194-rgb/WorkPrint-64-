@@ -10,6 +10,16 @@ A universal USB printer driver is not realistic. USB detection only identifies a
 4. Prefer standards-based IPP Everywhere when the device advertises the required capabilities.
 5. Select a backend only after capability discovery. Examples include PWG Raster, PDF, PostScript, PCL or vendor-specific languages, depending on the printer.
 
+## On-device diagnostic helper
+
+Run the read-only diagnostic from a terminal after booting the live system:
+
+```sh
+sh /usr/share/workprint/tools/diagnose-printers.sh
+```
+
+It reports USB vendor/product IDs, CUPS scheduler status, discovered CUPS backends and IPP-USB service status. It does not install drivers, change printer configuration or send a test page. Record the exact printer model and compare the reported IDs with the manufacturer's documentation before selecting a driver.
+
 ## Included components
 
 The current live image package list includes:
