@@ -7,15 +7,15 @@ KERNEL_LMA = 0x00100000;
 
 PHDRS
 {
-    text   PT_LOAD FLAGS(5);
-    rodata PT_LOAD FLAGS(4);
-    data   PT_LOAD FLAGS(6);
+    text    PT_LOAD FLAGS(5);
+    rodata  PT_LOAD FLAGS(4);
+    requests PT_LOAD FLAGS(6);
+    data    PT_LOAD FLAGS(6);
 }
 
 SECTIONS
 {
     . = KERNEL_VMA;
-    __kernel_virtual_start = .;
 
     .text ALIGN(4K) : AT(ADDR(.text) - KERNEL_VMA + KERNEL_LMA)
     {
@@ -28,6 +28,13 @@ SECTIONS
         *(.rodata .rodata.*)
     } :rodata
 
+    .limine_requests ALIGN(4K) : AT(ADDR(.limine_requests) - KERNEL_VMA + KERNEL_LMA)
+    {
+        KEEP(*(.limine_requests_start))
+        KEEP(*(.limine_requests))
+        KEEP(*(.limine_requests_end))
+    } :requests
+
     .data ALIGN(4K) : AT(ADDR(.data) - KERNEL_VMA + KERNEL_LMA)
     {
         *(.data .data.*)
@@ -38,10 +45,6 @@ SECTIONS
         *(COMMON)
         *(.bss .bss.*)
     } :data
-
-    __kernel_virtual_end = .;
-    __kernel_physical_start = LOADADDR(.text);
-    __kernel_physical_end = LOADADDR(.bss) + SIZEOF(.bss);
 
     /DISCARD/ :
     {
