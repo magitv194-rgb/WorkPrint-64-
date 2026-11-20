@@ -2,23 +2,30 @@
 
 WorkPrint 64 is a Linux-based operating-system project for modest x86_64 computers. Its goal is a lightweight, classic desktop inspired by Windows 7, with a modern browser for WhatsApp Web and a practical printing workflow.
 
-**Current status: migration decision recorded; the Linux-based system is not built yet.** The repository still contains an experimental freestanding kernel scaffold from the original from-scratch approach. That scaffold is retained as historical development work, but it is no longer the primary implementation path.
+**Current status: first live-build configuration committed; no ISO has been built or boot-tested yet.** The repository now contains a Debian 13 (Trixie) amd64 live-build recipe with XFCE, LightDM, Firefox ESR, CUPS, IPP-USB and selected printer drivers, plus local configuration checks and a GitHub Actions package-resolution workflow. This is build infrastructure, not a finished operating system.
 
-## New technical direction
+## Technical direction
 
-- Use a maintained Linux distribution as the kernel and hardware-support foundation.
-- Start from a minimal Debian stable installation with the XFCE desktop, then customize and reduce unnecessary services.
-- Target the existing Lenovo with 3 GB RAM; measure real memory use rather than assuming every browser workload will fit comfortably.
-- Include a supported modern browser for WhatsApp Web, subject to current browser and WhatsApp requirements.
-- Use CUPS and prefer IPP Everywhere / IPP-USB where the printer supports them. Add model-specific drivers or backends only where licensing and availability permit.
-- Build a branded WorkPrint 64 desktop, boot artwork, defaults, documentation and recovery process.
-- Never risk the existing installation during early testing. Begin with a live USB or virtual machine.
+- Use Debian stable as the maintained Linux foundation.
+- Start with XFCE and LightDM, then customize the desktop with WorkPrint branding.
+- Target x86_64; confirm that the Lenovo CPU supports 64-bit mode before attempting to boot this image.
+- Include Firefox ESR as the initial browser candidate. WhatsApp Web compatibility and memory use still need testing.
+- Use CUPS and prefer IPP Everywhere / IPP-USB where the printer supports them. Exact model support must be tested.
+- Keep the 3 GB RAM limit in mind and measure actual usage rather than promising smooth performance in every workload.
+- Never risk the existing installation during early testing.
 
-## What is not ready
+## Build configuration
 
-There is no WorkPrint 64 Linux ISO, installer, customized desktop image, browser bundle, or verified printer compatibility list yet. The existing custom kernel is not a usable operating system and is retained only as a legacy experiment. No installation or hardware test has been performed on the Lenovo.
+See [live/README.md](live/README.md) for the initial image build instructions. The live-build configuration is in `live/`; package selection is in `live/config/package-lists/workprint.list.chroot`.
 
-## Development plan
+The local configuration check is:
 
-See [docs/LINUX_BASE.md](docs/LINUX_BASE.md) for the new architecture decision and [docs/ROADMAP.md](docs/ROADMAP.md) for milestones. The old freestanding kernel build notes remain in [docs/BUILD.md](docs/BUILD.md) for historical reference only.
+```sh
+tools/check-live-config.sh
+```
 
+## Current limitations
+
+No WorkPrint 64 ISO, live USB, installer, customized theme, or verified printer compatibility list exists yet. The image build and boot tests remain pending. The original freestanding kernel scaffold is retained as a legacy experiment and is no longer the product's primary implementation path.
+
+Do not install anything to the Lenovo's internal disk. Build and test in a virtual machine first, then use a live USB without installing.
