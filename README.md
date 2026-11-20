@@ -2,7 +2,7 @@
 
 WorkPrint 64 is a Linux-based operating-system project for modest x86_64 computers. Its goal is a lightweight, classic desktop inspired by Windows 7, with a modern browser for WhatsApp Web and a practical printing workflow.
 
-**Current status: customized amd64 hybrid ISO built successfully and visually boot-tested to the XFCE live desktop in QEMU with 3 GB RAM assigned.** The image is based on Debian 13 (Trixie) and currently includes XFCE, LightDM, Firefox ESR, CUPS, IPP-USB and selected printer drivers. GitHub Actions validates package availability, builds the ISO, checks its boot catalog and publishes a SHA-256 checksum.
+**Current status: Debian 13 (Trixie) amd64 hybrid ISO built successfully and visually boot-tested to the customized XFCE live desktop in QEMU with 3 GB RAM assigned.** The VM evidence confirms the WorkPrint wallpaper, panel and desktop icons. Automated OCR now checks the icon labels in a cropped, enlarged screenshot. GitHub Actions also validates package availability, builds the ISO, checks its boot catalog and publishes a SHA-256 checksum.
 
 The QEMU test confirms that the graphical live session can start in that virtual configuration. It does not establish performance, networking, printer compatibility or successful operation on the target Lenovo. This remains an early development image, not a finished or stable operating system.
 
@@ -20,8 +20,9 @@ The QEMU test confirms that the graphical live session can start in that virtual
 
 See [live/README.md](live/README.md) for the image build instructions. The live-build configuration is in `live/`; package selection is in `live/config/package-lists/workprint.list.chroot`.
 
-- [GitHub Actions ISO build history and artifacts](https://github.com/magitv194-rgb/WorkPrint-64-/actions/workflows/build-iso.yml)
-- [QEMU live-boot smoke-test evidence](https://github.com/magitv194-rgb/WorkPrint-64-/actions/runs/44806112856)
+- [Latest verified ISO build](https://github.com/magitv194-rgb/WorkPrint-64-/actions/runs/44810603583)
+- [Latest successful QEMU desktop test](https://github.com/magitv194-rgb/WorkPrint-64-/actions/runs/44813818683)
+- [Linux configuration validation](https://github.com/magitv194-rgb/WorkPrint-64-/actions/runs/44813818610)
 - [Validation plan](docs/TEST_PLAN.md)
 - [Desktop shortcuts and design status](docs/DESKTOP.md)
 - [Printing architecture and current support status](docs/PRINTING.md)
@@ -34,6 +35,6 @@ sh tools/check-live-config.sh
 
 ## Current limitations
 
-The ISO reaches the XFCE desktop in QEMU with 3 GB RAM assigned. It has not yet been tested on the Lenovo itself. Network, audio, browser responsiveness, WhatsApp Web performance and physical printer compatibility remain unverified.
+The ISO reaches the customized XFCE desktop in QEMU with 3072 MB RAM assigned, and the desktop icon OCR check passes. Network connectivity, audio, Firefox launch/page loading, WhatsApp Web performance, memory consumption and physical printer compatibility remain unverified. The Lenovo itself has not yet been tested.
 
 Do not install anything to the Lenovo's internal disk. Next, test the ISO as a live USB without installing. See [the validation plan](docs/TEST_PLAN.md).
