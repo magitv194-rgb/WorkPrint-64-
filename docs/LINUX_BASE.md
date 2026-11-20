@@ -8,16 +8,16 @@ This changes the implementation, not the product name or goals.
 
 ## Initial implementation
 
-The first live-build configuration targets:
+The current live-build configuration targets:
 
 - Debian 13 (Trixie) stable, amd64.
 - XFCE desktop with LightDM.
-- Firefox ESR as the first browser candidate.
+- Firefox ESR with conservative cache/session defaults for low-memory systems.
 - CUPS, system-config-printer, IPP-USB and selected open printer drivers.
 - Spanish (Argentina) locale and Latin American keyboard layout.
 - A Lenovo target with 3 GB RAM, subject to confirming x86_64 CPU support.
 
-The package selection and live-build script are in `live/` and `tools/configure-live-build.sh`. The image has not yet been built. See [live/README.md](../live/README.md).
+The package selection and live-build script are in `live/` and `tools/configure-live-build.sh`. A first amd64 hybrid ISO has been built and uploaded as a development artifact. It has not yet been boot-tested. See [the validation plan](TEST_PLAN.md).
 
 ## Why this route
 
@@ -27,7 +27,7 @@ The trade-off is that WorkPrint 64 is a customized Linux distribution/remix, not
 
 ## Memory constraints
 
-3 GB RAM is a tight target for a modern browser. The desktop should be kept lean, background services minimized only when safe, and memory use measured on the actual machine. Low idle-memory use does not guarantee smooth browsing with several tabs or large WhatsApp downloads.
+3 GB RAM is a tight target for a modern browser. The desktop should be kept lean, background services minimized only when safe, and memory use measured on the actual machine. Firefox receives conservative cache/session defaults, but those settings are not a substitute for real measurements. Low idle-memory use does not guarantee smooth browsing with several tabs or large WhatsApp downloads.
 
 ## Safe development sequence
 
@@ -41,4 +41,4 @@ The trade-off is that WorkPrint 64 is a customized Linux distribution/remix, not
 
 ## Current status
 
-The repository contains an initial live-build recipe and package-selection list. It does not yet contain a built ISO, verified live session, installer test, or hardware compatibility results.
+The initial amd64 ISO build and artifact upload succeeded. The next gate is independent ISO inspection and a VM boot test. No physical Lenovo hardware or printer has yet been tested.
