@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#061d35"/>
+      <stop offset=".48" stop-color="#075477"/>
+      <stop offset="1" stop-color="#092c4b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".72" cy=".42" r=".55">
+      <stop offset="0" stop-color="#45c8d6" stop-opacity=".52"/>
+      <stop offset=".55" stop-color="#1686b1" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#06304e" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ribbon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#70e1cf" stop-opacity=".66"/>
+      <stop offset=".5" stop-color="#54a9df" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#9c8de2" stop-opacity=".55"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="28"/>
+    </filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <rect width="1920" height="1080" fill="url(#glow)"/>
+  <ellipse cx="1390" cy="510" rx="430" ry="290" fill="#56d5d1" opacity=".12" filter="url(#soft)"/>
+  <g fill="none" stroke="url(#ribbon)" stroke-width="13" opacity=".68">
+    <path d="M-180 850 C180 440 370 390 610 610 S980 900 1220 590 S1590 180 2100 470"/>
+    <path d="M-120 1010 C220 650 420 610 660 800 S1040 1050 1280 760 S1640 360 2080 650" opacity=".55"/>
+    <path d="M250 -140 C540 180 650 250 860 170 S1270 -20 1510 210 S1800 460 2020 330" opacity=".45"/>
+  </g>
+  <g transform="translate(1370 530)">
+    <circle r="176" fill="#7fe7dc" opacity=".09"/>
+    <circle r="132" fill="none" stroke="#a8f2e9" stroke-width="2" opacity=".25"/>
+    <path d="M-95 0 H95 M0 -95 V95" stroke="#b4f7ef" stroke-width="2" opacity=".16"/>
+    <circle r="8" fill="#d8fff8" opacity=".8"/>
+  </g>
+  <text x="1820" y="985" text-anchor="end" font-family="Noto Sans, sans-serif" font-size="54" font-weight="600" fill="#eaf8ff" opacity=".9">WorkPrint 64</text>
+  <text x="1820" y="1030" text-anchor="end" font-family="Noto Sans, sans-serif" font-size="22" letter-spacing="5" fill="#b9d9e8" opacity=".75">LIGERO · CLARO · PRÁCTICO</text>
+</svg>
