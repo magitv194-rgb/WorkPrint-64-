@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=WhatsApp Web
+Name[es]=WhatsApp Web
+Comment=Open WhatsApp Web in Firefox ESR
+Comment[es]=Abrir WhatsApp Web en Firefox ESR
+Exec=firefox-esr --new-window https://web.whatsapp.com/
+Icon=web-browser
+Terminal=false
+Categories=Network;WebBrowser;
+StartupNotify=true
