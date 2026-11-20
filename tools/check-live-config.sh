@@ -18,6 +18,7 @@ root = Path(sys.argv[1])
 configs = {
     "live/config/includes.chroot/etc/xdg/xfce4/panel/default.xml": "xfce4-panel",
     "live/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml": "xsettings",
+    "live/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml": "xfce4-desktop",
 }
 for relative, expected_channel in configs.items():
     path = root / relative
@@ -26,6 +27,17 @@ for relative, expected_channel in configs.items():
     channel = ET.parse(path).getroot()
     if channel.tag != "channel" or channel.get("name") != expected_channel:
         raise SystemExit(f"Invalid XFCE channel in {relative}")
+
+wallpaper = root / "live/config/includes.chroot/usr/share/backgrounds/workprint/workprint-wallpaper.svg"
+if not wallpaper.is_file():
+    raise SystemExit("Missing WorkPrint desktop wallpaper")
+ET.parse(wallpaper)
+
+desktop = ET.parse(root / configs.keys().__iter__().__next__()).getroot()
+desktop_config = ET.parse(root / "live/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml").getroot()
+image = desktop_config.find(".//property[@name='last-image']")
+if image is None or image.get("value") != "/usr/share/backgrounds/workprint/workprint-wallpaper.svg":
+    raise SystemExit("XFCE desktop does not point to the WorkPrint wallpaper")
 
 policy_path = root / "live/config/includes.chroot/etc/firefox-esr/policies/policies.json"
 policy = json.loads(policy_path.read_text(encoding="utf-8"))
@@ -54,7 +66,7 @@ for required in ("whiskermenu", "tasklist", "systray", "clock", "actions"):
     if required not in plugin_values:
         raise SystemExit(f"XFCE panel is missing plugin: {required}")
 
-print("XFCE, Firefox policy and application launcher checks passed.")
+print("XFCE desktop, wallpaper, Firefox policy and application launcher checks passed.")
 PY
 
 awk '
