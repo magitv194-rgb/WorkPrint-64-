@@ -39,15 +39,21 @@ jobs:
       - name: Build hybrid ISO
         working-directory: live
         run: lb build
-      - name: Verify ISO output
+      - name: Verify ISO output and boot catalog
         run: |
           set -eu
-          find live -maxdepth 1 -type f -name '*.iso' -size +100M -print -quit | grep .
-          sha256sum live/*.iso
-      - name: Upload ISO artifact
+          iso="$(find live -maxdepth 1 -type f -name '*.iso' -size +100M -print -quit)"
+          test -n "$iso"
+          xorriso -indev "$iso" -report_el_torito plain 2>&1 | tee /tmp/workprint-boot-catalog.txt
+          grep -Eqi 'El Torito|boot catalog|boot img' /tmp/workprint-boot-catalog.txt
+          xorriso -indev "$iso" -report_system_area plain 2>&1 | tee /tmp/workprint-system-area.txt
+          sha256sum "$iso" | tee live/SHA256SUMS
+      - name: Upload ISO artifact and checksum
         uses: actions/upload-artifact@v4
         with:
           name: workprint-64-amd64-iso
-          path: live/*.iso
+          path: |
+            live/*.iso
+            live/SHA256SUMS
           if-no-files-found: error
           retention-days: 14
