@@ -1,67 +1,34 @@
-# Build and test
+# Legacy freestanding-kernel build notes
 
-## Important safety note
+> **Important:** These instructions apply only to the original experimental Limine kernel scaffold. They are retained for reference and are no longer the build path for the WorkPrint 64 product. The current architecture decision is documented in [LINUX_BASE.md](LINUX_BASE.md).
 
-Do not install this project over the Lenovo's current system. This repository does not yet provide a complete OS, installer, storage stack, or recovery process. Testing must begin in an emulator or from a separate removable drive after a bootable image has been verified.
+## Safety
 
-## Required tools
+Do not install this project over the Lenovo's current system. The freestanding kernel is not a complete operating system and does not provide a desktop, storage stack, network stack, USB host controller, printer support or installer.
 
-A 64-bit Linux development environment is the supported build host for this early scaffold. Install:
+## Tools for the legacy kernel scaffold
 
-- GCC and GNU binutils (a native x86_64 compiler is sufficient for this stage; a cross compiler can also be selected with Make variables);
+A 64-bit Linux development environment is required for this historical experiment:
+
+- GCC and GNU binutils;
 - GNU Make and Python 3;
 - xorriso for ISO creation;
-- the Limine host utility and BIOS/UEFI files from the same recent binary release, with protocol base revision 6 support.
+- Limine host utility and BIOS/UEFI files from one compatible release supporting protocol base revision 6.
 
-The kernel explicitly requests Limine base revision 6, the current non-deprecated revision in the upstream protocol. An older Limine binary may refuse to load it. Do not mix arbitrary Limine binaries from different releases.
+## Build the legacy kernel
 
-The target computer does not need Linux installed. These are development-host tools, not a requirement for the eventual end-user system.
-
-## Build kernel
-
-Run:
+From the repository root:
 
 ```sh
 make check-tools all validate
 ```
 
-Expected output: `build/workprint.elf`, followed by an ELF validation summary showing four load segments and accepted Limine request metadata.
+This builds and statically validates `build/workprint.elf`. It does not produce a usable desktop OS.
 
-To select a cross toolchain, pass its executable names explicitly, for example:
+## Runtime status
 
-```sh
-make CC=x86_64-elf-gcc LD=x86_64-elf-ld AS=x86_64-elf-gcc
-```
+The kernel scaffold has not been verified booting in QEMU or on the target Lenovo. No bootable ISO has been verified. Do not treat a successful ELF build as proof of a working operating system.
 
-## Kernel memory layout and Limine metadata
+## Superseded plan
 
-The kernel is linked at the higher-half virtual address `0xffffffff80000000`, while its ELF load segments have physical load addresses beginning at 1 MiB. The linker script expresses this distinction with separate virtual and load addresses and emits separate executable, read-only, writable-request, and BSS load segments.
-
-The kernel includes the Limine request start/end markers, a base-revision-6 tag, and a memory-map request in a dedicated writable `.limine_requests` ELF load segment. At startup it checks the base revision, verifies that the memory-map response uses revision 0, and, when a response is available, prints each region's base, length, and type over COM1. It rejects zero-length and overflowing ranges from its diagnostic totals and caps printed entries at 128. The validator checks the ELF structure, load addresses, permissions, marker order, base-revision tag, and memory-map request. These checks are preliminary diagnostics, not a physical memory manager and not proof that a particular Limine binary will boot the kernel.
-
-The boot entry assumes the Limine loader has established the protocol execution environment. The kernel does not yet establish its own page tables, manage physical or virtual memory, or request a framebuffer.
-
-## ISO image
-
-Place all four required Limine release files from the same compatible release in `limine/`:
-
-- `limine-bios.sys`
-- `limine-bios-cd.bin`
-- `limine-uefi-cd.bin`
-- `BOOTX64.EFI`
-
-Then run:
-
-```sh
-make iso
-```
-
-The ISO recipe is an initial integration point and must be checked against the exact Limine release before relying on it. No ISO has been built or boot-tested yet.
-
-## Validation still required
-
-- Confirm the hosted GitHub Actions run succeeds.
-- Build an ISO with a pinned, compatible Limine release.
-- Verify Limine protocol handoff and serial output in QEMU.
-- Request and parse the Limine memory map before adding a physical memory manager.
-- Add automated checks before attempting real hardware.
+The former from-scratch roadmap is superseded by [ROADMAP.md](ROADMAP.md). WorkPrint 64's primary path is now a customized Linux-based system.
