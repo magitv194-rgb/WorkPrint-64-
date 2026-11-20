@@ -1,6 +1,6 @@
 # Validation plan
 
-This plan separates build validation from boot validation and real hardware compatibility. A successful ISO build does not prove that the desktop, networking or printer support works.
+This plan separates build validation from boot validation and real hardware compatibility. A successful ISO build does not prove that networking, printing or performance works.
 
 ## 1. Build artifact
 
@@ -17,32 +17,26 @@ The current CI artifact is retained for 14 days. It is a development artifact, n
 
 ## 2. Virtual machine smoke test
 
-A QEMU smoke-test workflow now downloads the ISO from the successful build, boots it with 3 GB RAM and captures early/late guest-display screenshots plus serial output. A successful QEMU process and screenshot capture are only preliminary evidence; inspect the screenshots to confirm that the live desktop actually appeared.
+- [x] Boot the ISO in QEMU using x86_64 emulation.
+- [x] Allocate 3072 MB RAM to the VM.
+- [x] Capture and inspect the guest display after boot.
+- [x] Confirm visually that the XFCE live desktop appears.
+
+Evidence: [QEMU smoke-test run](https://github.com/magitv194-rgb/WorkPrint-64-/actions/runs/44806112856). The uploaded evidence contains early and late screenshots. The late screenshot shows the XFCE desktop with desktop icons and panel. This confirms a graphical live-session boot in this QEMU configuration, not on the target Lenovo hardware.
+
+Still to test in the VM:
+- [ ] BIOS and UEFI boot modes independently.
+- [ ] Live desktop responsiveness over an extended session.
+- [ ] Virtual network connectivity.
+- [ ] Firefox ESR launch and basic browsing.
+- [ ] CUPS startup and local administration page.
+- [ ] Clean shutdown and reboot.
 
 Use a disposable VM. Do not attach a physical disk or enable automatic installation.
 
-Suggested baseline:
-- Architecture: x86_64 / amd64
-- Firmware: test BIOS first, then UEFI
-- RAM: 2048 MB for a general boot test; repeat at 3072 MB to approximate the target laptop
-- CPUs: 2
-- Disk: none required for a live-session test
-- Network: user-mode networking
-- CD/DVD: attach the WorkPrint ISO
-
-Record:
-- Does the boot menu appear?
-- Does the live kernel and initramfs load without errors?
-- Does the live session reach the graphical login/desktop?
-- Does XFCE start and remain responsive?
-- Is the virtual network interface detected?
-- Does Firefox ESR launch?
-- Does CUPS start and expose its local administration page?
-- Does shutdown/reboot complete cleanly?
-
-A headless QEMU process remaining alive is not sufficient evidence of a successful graphical boot. Capture the guest display or use a serial console configured for diagnostic output.
-
 ## 3. 3 GB memory profile
+
+The VM was configured with 3072 MB RAM, but memory consumption and performance have not yet been measured.
 
 After a successful desktop boot:
 - Record idle memory after five minutes with no applications open.
