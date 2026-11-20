@@ -36,12 +36,19 @@ for index in range(phnum):
         fail(f"load segment {index}: file size exceeds memory size")
     if p_offset + p_filesz > len(data):
         fail(f"load segment {index}: data extends past end of file")
+    if p_memsz == 0:
+        fail(f"load segment {index}: empty memory segment")
     if p_paddr < 0x00100000 or p_paddr >= 0x100000000:
         fail(f"load segment {index}: physical address is outside the expected low-memory window")
-    if p_vaddr < 0xFFFFFFFF80000000:
-        fail(f"load segment {index}: virtual address is not in the higher half")
-    if p_align not in (0, 1) and (p_align & (p_align - 1)):
-        fail(f"load segment {index}: alignment is not a power of two")
+    if p_memsz > 0x100000000 - p_paddr:
+        fail(f"load segment {index}: physical range extends beyond 4 GiB")
+    if p_vaddr < 0xFFFFFFFF80000000 or p_memsz > 0xFFFFFFFFFFFFFFFF - p_vaddr:
+        fail(f"load segment {index}: virtual range is outside the higher-half address space")
+    if p_align not in (0, 1):
+        if p_align & (p_align - 1):
+            fail(f"load segment {index}: alignment is not a power of two")
+        if p_vaddr % p_align != p_offset % p_align:
+            fail(f"load segment {index}: virtual address and file offset are incongruent")
     loads.append((p_flags, p_vaddr, p_paddr, p_memsz))
 
 if not loads:
@@ -54,10 +61,18 @@ sections = [
     for index in range(shnum)
 ]
 strings_section = sections[shstrndx]
-strings = data[strings_section[4]:strings_section[4] + strings_section[5]]
+if strings_section[1] != 3:  # SHT_STRTAB
+    fail("section-name table is not a string table")
+strings_start = strings_section[4]
+strings_end = strings_start + strings_section[5]
+if strings_end > len(data):
+    fail("section-name string table extends past end of file")
+strings = data[strings_start:strings_end]
 request_section = None
 for section in sections:
     name_offset = section[0]
+    if name_offset >= len(strings):
+        continue
     end = strings.find(b"\0", name_offset)
     if end < 0:
         continue
@@ -67,6 +82,8 @@ for section in sections:
 
 if request_section is None:
     fail("missing .limine_requests section")
+if request_section[1] != 1:  # SHT_PROGBITS
+    fail(".limine_requests is not a PROGBITS section")
 request_address, request_offset, request_size = request_section[3], request_section[4], request_section[5]
 if request_offset + request_size > len(data):
     fail(".limine_requests extends past end of file")
