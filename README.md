@@ -21,8 +21,7 @@ There is no desktop, browser, network stack, Wi-Fi support, USB host controller,
 See [docs/BUILD.md](docs/BUILD.md) for the supported development environment, build commands, Limine requirements, and validation status. The static ELF check is:
 
 ```sh
-make check-tools all
-python3 tools/verify_elf.py build/workprint.elf
+make check-tools all validate
 ```
 
 Do not install this project over the Lenovo's current system. First prove the boot process in QEMU, then test from removable media with a recovery path.
