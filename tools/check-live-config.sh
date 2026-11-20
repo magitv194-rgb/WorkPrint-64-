@@ -61,9 +61,19 @@ for relative, (name, command) in launchers.items():
 
 panel = ET.parse(root / "live/config/includes.chroot/etc/xdg/xfce4/panel/default.xml").getroot()
 plugin_values = [p.get("value") for p in panel.findall(".//property[@name='plugins']/property")]
-for required in ("whiskermenu", "tasklist", "systray", "clock", "actions"):
+for required in ("whiskermenu", "launcher", "tasklist", "systray", "clock", "actions"):
     if required not in plugin_values:
         raise SystemExit(f"XFCE panel is missing plugin: {required}")
+
+launcher = panel.find(".//property[@name='plugin-7']")
+launcher_items = {v.get("value") for v in launcher.findall(".//value")} if launcher is not None else set()
+for required in (
+    "/usr/share/applications/firefox-esr.desktop",
+    "/usr/share/applications/workprint-whatsapp.desktop",
+    "/usr/share/applications/workprint-printers.desktop",
+):
+    if required not in launcher_items:
+        raise SystemExit(f"XFCE quick-launcher is missing: {required}")
 
 print("XFCE desktop, wallpaper, Firefox policy and application launcher checks passed.")
 PY

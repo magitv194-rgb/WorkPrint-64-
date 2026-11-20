@@ -11,7 +11,7 @@ These launchers do not bundle WhatsApp or a proprietary printer driver. WhatsApp
 
 ## Visual configuration
 
-- XFCE panel at the bottom, with Whisker menu, task list, notification area, clock and session actions.
+- XFCE panel at the bottom, with Whisker menu, pinned Firefox ESR / WhatsApp Web / Impresoras launchers, task list, notification area, clock and session actions.
 - Greybird GTK theme and elementary-xfce icon theme.
 - Noto Sans interface font.
 - A WorkPrint 64 vector wallpaper installed at `/usr/share/backgrounds/workprint/workprint-wallpaper.svg` and selected by the default XFCE desktop channel.

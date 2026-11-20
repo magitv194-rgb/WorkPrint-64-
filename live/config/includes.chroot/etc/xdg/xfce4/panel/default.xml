@@ -12,6 +12,7 @@
       <property name="mode" type="uint" value="0"/>
       <property name="plugin-ids" type="array">
         <value type="int" value="1"/>
+        <value type="int" value="7"/>
         <value type="int" value="2"/>
         <value type="int" value="3"/>
         <value type="int" value="4"/>
@@ -22,6 +23,13 @@
   </property>
   <property name="plugins" type="empty">
     <property name="plugin-1" type="string" value="whiskermenu"/>
+    <property name="plugin-7" type="string" value="launcher">
+      <property name="items" type="array">
+        <value type="string" value="/usr/share/applications/firefox-esr.desktop"/>
+        <value type="string" value="/usr/share/applications/workprint-whatsapp.desktop"/>
+        <value type="string" value="/usr/share/applications/workprint-printers.desktop"/>
+      </property>
+    </property>
     <property name="plugin-2" type="string" value="tasklist"/>
     <property name="plugin-3" type="string" value="separator">
       <property name="expand" type="bool" value="true"/>
