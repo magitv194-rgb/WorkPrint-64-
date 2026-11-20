@@ -10,7 +10,21 @@ CFLAGS := -std=gnu11 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -m64 
 ASFLAGS := -c -m64 -ffreestanding -fno-pic -fno-pie -mno-red-zone
 LDFLAGS := -nostdlib -z max-page-size=0x1000 -T linker.ld
 
-.PHONY: all clean check-tools validate iso
+.PHONY: all clean check-tools validate iso help live-check live-config live-build
+
+# The default kernel targets are retained only for the legacy from-scratch experiment.
+# The current WorkPrint 64 product path is the Linux live image under live/.
+help:
+	@printf '%s\\n' 'Legacy kernel: make all validate' 'Linux product: make live-check | live-config | live-build'
+
+live-check:
+	$(MAKE) -C live check
+
+live-config:
+	$(MAKE) -C live config
+
+live-build:
+	$(MAKE) -C live build
 all: $(KERNEL)
 
 $(BUILD_DIR):
