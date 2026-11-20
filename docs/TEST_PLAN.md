@@ -13,7 +13,7 @@ This plan separates build validation from boot validation and real hardware comp
 - [x] Inspect the ISO system area with `xorriso`.
 - [x] Upload the ISO and checksum as a workflow artifact.
 
-The current CI artifact is retained for 14 days. It is a development artifact, not a release.
+The verified ISO build is [run 44810603583](https://github.com/magitv194-rgb/WorkPrint-64-/actions/runs/44810603583). Its artifact is retained for 14 days. It is a development artifact, not a release.
 
 ## 2. Virtual machine smoke test
 
@@ -21,14 +21,17 @@ The current CI artifact is retained for 14 days. It is a development artifact, n
 - [x] Allocate 3072 MB RAM to the VM.
 - [x] Capture and manually inspect the guest display after boot.
 - [x] Confirm that the XFCE live desktop appears.
-- [ ] Require OCR checks for expected desktop icons in CI (new assertion added; awaiting workflow result).
+- [x] Confirm that the WorkPrint wallpaper is applied.
+- [x] Require OCR checks for the desktop labels "Carpeta" and "Papelera" in CI.
 - [ ] Verify virtual network connectivity from inside the guest.
 - [ ] Verify Firefox ESR launches and loads a page.
 - [ ] Verify CUPS starts and exposes its local administration page.
 - [ ] Verify clean shutdown and reboot.
 - [ ] Test BIOS and UEFI boot modes independently.
 
-Evidence: [QEMU smoke-test run](https://github.com/magitv194-rgb/WorkPrint-64-/actions/runs/44806112856). The late screenshot shows the XFCE desktop and desktop icons. This confirms a graphical live-session boot in that QEMU configuration, not on the target Lenovo hardware.
+Evidence: [QEMU smoke-test run 44813818683](https://github.com/magitv194-rgb/WorkPrint-64-/actions/runs/44813818683). The captured 1280x800 screenshot was inspected manually. It shows the WorkPrint wallpaper, XFCE panel and desktop icons. The OCR artifact contains "Carpeta personal", "Sistema de archivos", "Papelera" and "Disco Disquete". The automated check passed after cropping and enlarging the icon area, avoiding a false negative from full-screen OCR.
+
+This confirms a graphical live-session boot in that QEMU configuration, not on the target Lenovo hardware.
 
 Use a disposable VM. Do not attach a physical disk or enable automatic installation.
 
