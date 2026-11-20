@@ -10,6 +10,17 @@ A universal USB printer driver is not realistic. USB detection only identifies a
 4. Prefer standards-based IPP Everywhere when the device advertises the required capabilities.
 5. Select a backend only after capability discovery. Examples include PWG Raster, PDF, PostScript, PCL or vendor-specific languages, depending on the printer.
 
+## Included components
+
+The current live image package list includes:
+- CUPS and CUPS client/filter components for print spooling and conversion.
+- system-config-printer for printer administration.
+- ipp-usb for printers exposing IPP-over-USB.
+- HPLIP and the HP CUPS driver package.
+- Gutenprint and brlaser for selected printer families.
+
+Package inclusion is not a claim that every printer model is supported. Actual support depends on the printer model, firmware, advertised protocols and available driver.
+
 ## Compatibility policy
 
 - Never send a format merely because the printer is connected.
@@ -19,4 +30,6 @@ A universal USB printer driver is not realistic. USB detection only identifies a
 
 ## Current status
 
-No USB stack, IPP client, spooler, rasterizer or printer backend is implemented in this repository. This document describes the intended design only.
+The printing software is included in the first ISO build configuration. No physical printer has yet been tested with WorkPrint 64. The target HP printer's exact model is still unknown, so its compatibility cannot yet be confirmed.
+
+The first hardware test must verify CUPS service startup, USB/network discovery, driver selection and successful sample-page output. See [the validation plan](TEST_PLAN.md).
