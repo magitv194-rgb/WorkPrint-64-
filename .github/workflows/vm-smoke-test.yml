@@ -146,7 +146,7 @@ jobs:
           test -s evidence/late-screen.ppm
           test -s evidence/service-checks.ppm
           test -s evidence/firefox-screen.ppm
-          magick evidence/late-screen.ppm -crop 180x450+0+0 +repage -resize 300% -colorspace Gray -contrast-stretch 1%x1% evidence/desktop-icons.png
+          magick evidence/service-checks.ppm -crop 180x450+0+0 +repage -resize 300% -colorspace Gray -contrast-stretch 1%x1% evidence/desktop-icons.png
           tesseract evidence/desktop-icons.png evidence/desktop-ocr -l spa+eng --psm 3
           grep -Eqi 'Carpeta' evidence/desktop-ocr.txt
           grep -Eqi 'Papelera' evidence/desktop-ocr.txt

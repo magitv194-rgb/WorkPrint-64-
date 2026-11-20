@@ -7,6 +7,10 @@ SCRIPT="$ROOT/tools/configure-live-build.sh"
 
 test -s "$LIST"
 sh -n "$SCRIPT"
+PRINTER_DIAGNOSTIC="$ROOT/live/config/includes.chroot/usr/share/workprint/tools/diagnose-printers.sh"
+test -s "$PRINTER_DIAGNOSTIC"
+sh -n "$PRINTER_DIAGNOSTIC"
+grep -qx 'usbutils' "$LIST"
 
 python3 - "$ROOT" <<'PY'
 import json
