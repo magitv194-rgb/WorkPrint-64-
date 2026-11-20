@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Impresoras
+Name[es]=Impresoras
+Comment=Configure local and network printers
+Comment[es]=Configurar impresoras locales y de red
+Exec=system-config-printer
+Icon=printer
+Terminal=false
+Categories=Settings;HardwareSettings;
+StartupNotify=true
