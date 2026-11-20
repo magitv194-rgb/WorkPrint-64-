@@ -1,0 +1,45 @@
+name: Build WorkPrint 64 ISO
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install image build dependencies
+        run: |
+          if [ -f /etc/apt/sources.list.d/debian.sources ]; then
+            sed -i 's/^Components: main$/Components: main contrib non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+          fi
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            live-build debootstrap xorriso squashfs-tools ca-certificates
+      - name: Validate configuration
+        run: |
+          sh tools/check-live-config.sh
+          packages="$(awk '!/^[[:space:]]*#/ && NF {print}' live/config/package-lists/workprint.list.chroot)"
+          apt-get -s install $packages
+      - name: Configure live image
+        run: sh tools/configure-live-build.sh
+      - name: Build hybrid ISO
+        working-directory: live
+        run: lb build
+      - name: Verify ISO output
+        run: |
+          set -eu
+          find live -maxdepth 1 -type f -name '*.iso' -size +100M -print -quit | grep .
+          sha256sum live/*.iso
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: workprint-64-amd64-iso
+          path: live/*.iso
+          if-no-files-found: error
+          retention-days: 14
