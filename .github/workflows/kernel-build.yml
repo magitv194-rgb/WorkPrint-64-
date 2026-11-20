@@ -15,9 +15,7 @@ jobs:
       - name: Install build tools
         run: sudo apt-get update && sudo apt-get install -y build-essential binutils python3
       - name: Build freestanding x86_64 kernel ELF
-        run: make CC=gcc LD=ld AS=gcc check-tools all
-      - name: Validate ELF and Limine metadata
-        run: python3 tools/verify_elf.py build/workprint.elf
+        run: make CC=gcc LD=ld AS=gcc PYTHON=python3 check-tools all validate
       - name: Inspect ELF
         run: readelf -h -l build/workprint.elf
       - name: Upload kernel ELF artifact
