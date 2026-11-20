@@ -1,9 +1,9 @@
 BUILD_DIR := build
 ISO_ROOT := $(BUILD_DIR)/iso_root
 KERNEL := $(BUILD_DIR)/workprint.elf
-CC ?= x86_64-elf-gcc
-LD ?= x86_64-elf-ld
-AS ?= x86_64-elf-gcc
+CC = gcc
+LD = ld
+AS = gcc
 CFLAGS := -std=gnu11 -ffreestanding -fno-stack-protector -fno-pic -fno-pie -m64 -mno-red-zone -mcmodel=kernel -Wall -Wextra -Werror -O2 -Iinclude
 ASFLAGS := -c -m64 -ffreestanding -fno-pic -fno-pie -mno-red-zone
 LDFLAGS := -nostdlib -z max-page-size=0x1000 -T linker.ld
