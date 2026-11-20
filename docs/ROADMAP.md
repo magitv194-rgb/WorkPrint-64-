@@ -13,7 +13,7 @@ WorkPrint 64 follows a Linux-based architecture. The original freestanding x86_6
 - [x] Confirm hosted package/configuration checks succeed.\n- [x] Build and upload the first amd64 hybrid ISO in GitHub Actions.\n- [ ] Independently download and inspect the ISO artifact.
 
 ## Stage 1: build and boot the first image
-- [ ] Build the first hybrid ISO on a Debian 13 amd64 host.
+- [x] Build the first hybrid ISO on a Debian 13 amd64 host (GitHub Actions).
 - [ ] Verify ISO checksums and inspect its boot structure.
 - [ ] Boot in QEMU with BIOS and UEFI where practical.
 - [ ] Confirm graphical XFCE login, networking and a usable live session.
@@ -27,7 +27,7 @@ WorkPrint 64 follows a Linux-based architecture. The original freestanding x86_6
 - [ ] Test suspend/resume and restart behaviour.
 
 ## Stage 3: WorkPrint desktop and work workflow
-- [ ] Create WorkPrint branding, wallpaper, icons, theme and login experience.
+- [ ] Create WorkPrint branding, wallpaper, icons, theme and login experience.\n- [x] Add menu launchers for WhatsApp Web and printer settings.\n- [x] Add conservative Firefox cache/session defaults for low-memory systems.
 - [ ] Configure a familiar classic taskbar, application menu and desktop layout.
 - [ ] Test Firefox ESR and WhatsApp Web, including downloads and document/image handling.
 - [ ] Measure browser memory use on the 3 GB target.
