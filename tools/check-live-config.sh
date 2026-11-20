@@ -33,7 +33,6 @@ if not wallpaper.is_file():
     raise SystemExit("Missing WorkPrint desktop wallpaper")
 ET.parse(wallpaper)
 
-desktop = ET.parse(root / configs.keys().__iter__().__next__()).getroot()
 desktop_config = ET.parse(root / "live/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml").getroot()
 image = desktop_config.find(".//property[@name='last-image']")
 if image is None or image.get("value") != "/usr/share/backgrounds/workprint/workprint-wallpaper.svg":
