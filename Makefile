@@ -15,7 +15,7 @@ LDFLAGS := -nostdlib -z max-page-size=0x1000 -T linker.ld
 # The default kernel targets are retained only for the legacy from-scratch experiment.
 # The current WorkPrint 64 product path is the Linux live image under live/.
 help:
-	@printf '%s\\n' 'Legacy kernel: make all validate' 'Linux product: make live-check | live-config | live-build'
+	@printf '%s\n' 'Legacy kernel: make all validate' 'Linux product: make live-check | live-config | live-build'
 
 live-check:
 	$(MAKE) -C live check
