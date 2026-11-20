@@ -1,27 +1,24 @@
 # WorkPrint 64
 
-WorkPrint 64 is an experimental x86_64 operating-system project. The goal is a lightweight desktop with a classic Windows 7-inspired appearance, a browser suitable for WhatsApp Web, and a practical printing subsystem.
+WorkPrint 64 is a Linux-based operating-system project for modest x86_64 computers. Its goal is a lightweight, classic desktop inspired by Windows 7, with a modern browser for WhatsApp Web and a practical printing workflow.
 
-**Status: early development scaffold. This is not yet an installable or daily-usable operating system.** The repository currently contains a minimal kernel entry point, serial diagnostics including Limine memory-map type labels, response-revision checking, range checks and a usable-memory total, a higher-half ELF layout, Limine protocol base revision 6 metadata, a static ELF validator, a Limine boot menu configuration, build notes, a roadmap, and a CI build workflow. It has not yet been boot-tested in QEMU or on the target Lenovo.
+**Current status: migration decision recorded; the Linux-based system is not built yet.** The repository still contains an experimental freestanding kernel scaffold from the original from-scratch approach. That scaffold is retained as historical development work, but it is no longer the primary implementation path.
 
-## Design priorities
+## New technical direction
 
-- x86_64 first; verify the target CPU and firmware before installation.
-- Keep memory use low; the target machine has 3 GB RAM.
-- Prefer open standards for printing: IPP Everywhere and IPP-USB when the printer supports them.
-- Treat model-specific printer support as a separate compatibility task; USB detection alone does not guarantee printing.
-- Never risk the existing installation during early testing.
+- Use a maintained Linux distribution as the kernel and hardware-support foundation.
+- Start from a minimal Debian stable installation with the XFCE desktop, then customize and reduce unnecessary services.
+- Target the existing Lenovo with 3 GB RAM; measure real memory use rather than assuming every browser workload will fit comfortably.
+- Include a supported modern browser for WhatsApp Web, subject to current browser and WhatsApp requirements.
+- Use CUPS and prefer IPP Everywhere / IPP-USB where the printer supports them. Add model-specific drivers or backends only where licensing and availability permit.
+- Build a branded WorkPrint 64 desktop, boot artwork, defaults, documentation and recovery process.
+- Never risk the existing installation during early testing. Begin with a live USB or virtual machine.
 
-## Current limitations
+## What is not ready
 
-There is no desktop, browser, network stack, Wi-Fi support, USB host controller, storage driver, filesystem, printer driver, print spooler, or installer yet. If booted successfully, the kernel initializes serial output, checks the Limine base revision, prints the supplied memory map, and then halts. This runtime behaviour has not yet been verified in QEMU. The ISO recipe has not been tested with a compatible Limine binary release.
+There is no WorkPrint 64 Linux ISO, installer, customized desktop image, browser bundle, or verified printer compatibility list yet. The existing custom kernel is not a usable operating system and is retained only as a legacy experiment. No installation or hardware test has been performed on the Lenovo.
 
-## Build and validation
+## Development plan
 
-See [docs/BUILD.md](docs/BUILD.md) for the supported development environment, build commands, Limine requirements, and validation status. The static ELF check is:
+See [docs/LINUX_BASE.md](docs/LINUX_BASE.md) for the new architecture decision and [docs/ROADMAP.md](docs/ROADMAP.md) for milestones. The old freestanding kernel build notes remain in [docs/BUILD.md](docs/BUILD.md) for historical reference only.
 
-```sh
-make check-tools all validate
-```
-
-Do not install this project over the Lenovo's current system. First prove the boot process in QEMU, then test from removable media with a recovery path.
