@@ -151,7 +151,7 @@ static void print_memory_map(void)
     for (uint64_t i = 0; i < count; ++i) {
         struct limine_memmap_entry *entry = response->entries[i];
         if (entry == 0) {
-            serial_write("Memory map contains a null entry pointer.\\n");
+            serial_write("Memory map contains a null entry pointer.\n");
             break;
         }
 
@@ -163,7 +163,7 @@ static void print_memory_map(void)
         serial_hex64(entry->type);
         serial_write(" (");
         serial_write(memory_type_name(entry->type));
-        serial_write(")\\n");
+        serial_write(")\n");
 
         if (entry->length == 0 || entry->length > UINT64_MAX - entry->base) {
             serial_write("  WARNING: invalid or overflowing memory range; excluded from totals.\n");
