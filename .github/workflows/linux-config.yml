@@ -15,6 +15,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install live-build
         run: |
+          if [ -f /etc/apt/sources.list.d/debian.sources ]; then
+            sed -i 's/^Components: main$/Components: main contrib non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+          fi
           apt-get update
           apt-get install -y --no-install-recommends live-build ca-certificates
       - name: Check configuration scripts and package list
