@@ -1,45 +1,47 @@
 # Development roadmap
 
-## Stage 0: repository and boot scaffold
-- [x] Establish project structure and goals.
-- [x] Add a minimal x86_64 entry point and serial diagnostics.
-- [x] Separate higher-half virtual addresses from low physical load addresses.
-- [x] Add Limine base revision 6 metadata, request delimiters, and memory-map request in a writable ELF segment.
-- [x] Add early-boot serial reporting for the Limine memory map, including type labels, invalid-range checks, and a usable-memory total (runtime verification in QEMU pending).
-- [x] Compile the kernel ELF with GCC/binutils in a local Linux environment.
-- [x] Validate ELF64 format, entry point, load segments, Limine markers, base revision, and request-segment permissions with `tools/verify_elf.py`.
-- [ ] Confirm the GitHub Actions hosted run.
-- [ ] Build an ISO with matching, compatible Limine binaries and host utility.
-- [ ] Boot in QEMU and verify serial output.
+WorkPrint 64 now follows the Linux-based architecture decision. The original freestanding x86_64 kernel work is retained as a legacy experiment, not the main product path.
 
-The kernel C source, including the memory-map diagnostic changes, passed a local GCC syntax check with the project's freestanding warning settings. The earlier kernel ELF and static validator passed in a local Linux build environment. The GitHub Actions workflow has been updated to run the validator and publish the ELF artifact, but its hosted run has not yet been independently confirmed. The memory-map request and serial reporting are implemented but have not yet been observed at runtime. No Limine ISO or QEMU boot has been verified.
+## Stage 0: architecture decision
+- [x] Define the product goal: lightweight x86_64 desktop, classic appearance, browser and practical printing.
+- [x] Choose a maintained Linux base instead of implementing a complete kernel and hardware stack from scratch.
+- [x] Record the original kernel scaffold as legacy work so it is not mistaken for a usable OS.
 
-## Stage 1: hardware foundation
-- [ ] Validate memory-map responses in QEMU and reserve kernel/bootloader regions safely.
-- [ ] Physical and virtual memory management.
-- [ ] Interrupt descriptor table, exceptions and timer.
-- [ ] PCI enumeration.
-- [ ] USB host controller support (xHCI, EHCI where needed).
-- [ ] ACPI power and device discovery.
-- [ ] Storage and filesystem support.
+## Stage 1: establish a reproducible Linux base
+- [ ] Confirm the Lenovo CPU architecture, firmware mode and boot options without modifying its disk.
+- [ ] Build a clean minimal Debian stable XFCE test installation in a virtual machine.
+- [ ] Record idle RAM use, boot time, disk footprint and responsiveness.
+- [ ] Create a repeatable package and configuration manifest.
+- [ ] Verify networking, audio, graphics, suspend/resume and USB on representative hardware.
+- [ ] Produce a first live USB image and test boot without installing to the Lenovo.
 
-## Stage 2: usable system
-- [ ] Framebuffer and graphics driver.
-- [ ] Window manager and classic desktop shell.
-- [ ] Keyboard, mouse and audio.
-- [ ] TCP/IP, DNS, TLS and Wi-Fi support.
-- [ ] Browser integration suitable for WhatsApp Web.
+## Stage 2: WorkPrint desktop
+- [ ] Create WorkPrint branding, wallpaper, icons, theme and login experience.
+- [ ] Configure a familiar classic taskbar, application menu and desktop layout.
+- [ ] Remove unnecessary startup services only after measuring their impact and checking dependencies.
+- [ ] Set up system updates, user accounts, firewall defaults and recovery documentation.
 
-## Stage 3: printing
-- [ ] USB device identification and safe hot-plug handling.
-- [ ] IPP and IPP-USB implementation where supported.
-- [ ] Printer capability discovery and print queue.
-- [ ] Model-specific backends and test matrix.
+## Stage 3: browser and work workflow
+- [ ] Select a maintained browser supported by the chosen base.
+- [ ] Test WhatsApp Web login, downloads and document/image handling.
+- [ ] Configure sensible browser defaults and low-memory usage guidance.
+- [ ] Test opening and printing common PDF and image formats.
 
-## Stage 4: reliability
-- [ ] Installer, partitioning safeguards and recovery.
-- [ ] Updates, logs and crash reporting.
-- [ ] Low-memory testing with a 3 GB RAM target.
-- [ ] Hardware compatibility testing on the actual Lenovo.
+## Stage 4: printing
+- [ ] Integrate CUPS and its service-management tools.
+- [ ] Test printer discovery over USB and network.
+- [ ] Prefer IPP Everywhere / IPP-USB when supported by the actual printer.
+- [ ] Identify exact HP printer model and check the appropriate supported driver/backend.
+- [ ] Test photo paper sizes, margins, quality settings, grayscale and multi-page documents.
+- [ ] Publish a tested printer compatibility list; do not claim universal support.
 
-Stages 1-4 are not implemented. Do not interpret checklist items as existing features.
+## Stage 5: release and recovery
+- [ ] Build a reproducible ISO/live USB image.
+- [ ] Test installation and recovery in a virtual machine first.
+- [ ] Test live boot on the Lenovo without overwriting its current operating system.
+- [ ] Measure performance with 3 GB RAM and document browser limitations.
+- [ ] Only consider installation after backup, hardware checks and a verified recovery route.
+
+## Legacy: freestanding kernel experiment
+
+The repository's original Limine-based kernel scaffold, ELF validator and related build notes are retained for reference. They do not provide a desktop, network, USB stack, storage, browser, printer support or installer, and they are not the foundation of the new Linux-based release.
