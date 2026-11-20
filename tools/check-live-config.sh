@@ -9,6 +9,7 @@ test -s "$LIST"
 sh -n "$SCRIPT"
 
 python3 - "$ROOT" <<'PY'
+import json
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -26,7 +27,34 @@ for relative, expected_channel in configs.items():
     if channel.tag != "channel" or channel.get("name") != expected_channel:
         raise SystemExit(f"Invalid XFCE channel in {relative}")
 
-print("XFCE desktop XML checks passed.")
+policy_path = root / "live/config/includes.chroot/etc/firefox-esr/policies/policies.json"
+policy = json.loads(policy_path.read_text(encoding="utf-8"))
+policies = policy.get("policies", {})
+for key in ("DisableTelemetry", "DisableFirefoxStudies", "DisablePocket"):
+    if policies.get(key) is not True:
+        raise SystemExit(f"Firefox policy {key} must be enabled")
+
+launchers = {
+    "live/config/includes.chroot/usr/share/applications/workprint-whatsapp.desktop":
+        ("WhatsApp Web", "firefox-esr --new-window https://web.whatsapp.com/"),
+    "live/config/includes.chroot/usr/share/applications/workprint-printers.desktop":
+        ("Impresoras", "system-config-printer"),
+}
+for relative, (name, command) in launchers.items():
+    path = root / relative
+    if not path.is_file():
+        raise SystemExit(f"Missing application launcher: {relative}")
+    content = path.read_text(encoding="utf-8")
+    if f"Name={name}" not in content or f"Exec={command}" not in content:
+        raise SystemExit(f"Invalid application launcher: {relative}")
+
+panel = ET.parse(root / "live/config/includes.chroot/etc/xdg/xfce4/panel/default.xml").getroot()
+plugin_values = [p.get("value") for p in panel.findall(".//property[@name='plugins']/property")]
+for required in ("whiskermenu", "tasklist", "systray", "clock", "actions"):
+    if required not in plugin_values:
+        raise SystemExit(f"XFCE panel is missing plugin: {required}")
+
+print("XFCE, Firefox policy and application launcher checks passed.")
 PY
 
 awk '
