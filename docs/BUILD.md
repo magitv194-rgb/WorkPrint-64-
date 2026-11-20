@@ -37,7 +37,7 @@ make CC=x86_64-elf-gcc LD=x86_64-elf-ld AS=x86_64-elf-gcc
 
 The kernel is linked at the higher-half virtual address `0xffffffff80000000`, while its ELF load segments have physical load addresses beginning at 1 MiB. The linker script expresses this distinction with separate virtual and load addresses and emits separate executable, read-only, writable-request, and BSS load segments.
 
-The kernel includes the Limine request start/end markers and a base-revision-6 tag in a dedicated writable `.limine_requests` ELF load segment. The kernel checks the tag at startup and halts with a serial diagnostic if the bootloader did not accept the requested revision. The validator checks the ELF structure, load addresses, permissions, marker order, and base-revision tag. This is a static consistency check, not proof that a particular Limine binary will boot the kernel.
+The kernel includes the Limine request start/end markers, a base-revision-6 tag, and a memory-map request in a dedicated writable `.limine_requests` ELF load segment. At startup it checks the base revision and, if a memory-map response is available, prints each region's base, length, and type over COM1. The validator checks the ELF structure, load addresses, permissions, marker order, base-revision tag, and memory-map request. This is a static consistency check, not proof that a particular Limine binary will boot the kernel.
 
 The boot entry assumes the Limine loader has established the protocol execution environment. The kernel does not yet request or consume a memory map or framebuffer, establish its own page tables, or initialize memory management.
 
