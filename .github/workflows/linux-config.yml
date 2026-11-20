@@ -19,7 +19,7 @@ jobs:
             sed -i 's/^Components: main$/Components: main contrib non-free-firmware/' /etc/apt/sources.list.d/debian.sources
           fi
           apt-get update
-          apt-get install -y --no-install-recommends live-build ca-certificates
+          apt-get install -y --no-install-recommends live-build ca-certificates python3
       - name: Check configuration scripts and package list
         run: sh tools/check-live-config.sh
       - name: Resolve requested packages against Debian Trixie
