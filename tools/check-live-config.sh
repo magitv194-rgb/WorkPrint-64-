@@ -8,7 +8,7 @@ SCRIPT="$ROOT/tools/configure-live-build.sh"
 test -s "$LIST"
 sh -n "$SCRIPT"
 
-python3 - "$ROOT" <<\x27PY\x27
+python3 - "$ROOT" <<'PY'
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
