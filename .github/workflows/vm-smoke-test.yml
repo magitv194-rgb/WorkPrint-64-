@@ -1,0 +1,101 @@
+name: WorkPrint VM boot smoke test
+
+on:
+  workflow_run:
+    workflows: ["Build WorkPrint 64 ISO"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  qemu-live-boot:
+    if: \${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Download ISO from the completed build
+        uses: actions/download-artifact@v4
+        with:
+          name: workprint-64-amd64-iso
+          path: iso
+          run-id: \${{ github.event.workflow_run.id }}
+          github-token: \${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install QEMU and virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-x86 xvfb
+
+      - name: Boot the live ISO and capture the guest display
+        run: |
+          set -eu
+          iso="$(find iso -maxdepth 1 -type f -name '*.iso' -print -quit)"
+          test -n "$iso"
+          mkdir -p evidence
+          cat > /tmp/boot-check.py <<'PY'
+          import os, socket, subprocess, time
+          monitor = "/tmp/workprint-qemu-monitor.sock"
+          cmd = [
+              "qemu-system-x86_64", "-machine", "accel=tcg",
+              "-m", "3072", "-smp", "2", "-vga", "std",
+              "-cdrom", os.environ["WORKPRINT_ISO"], "-boot", "d",
+              "-display", "sdl", "-monitor", f"unix:{monitor},server,nowait",
+              "-serial", "file:evidence/serial.log", "-no-reboot",
+              "-no-shutdown", "-netdev", "user,id=n1",
+              "-device", "virtio-net-pci,netdev=n1"
+          ]
+          proc = subprocess.Popen(cmd)
+          try:
+              deadline = time.time() + 45
+              sock = None
+              while time.time() < deadline:
+                  if proc.poll() is not None:
+                      raise SystemExit("QEMU exited before the guest booted")
+                  try:
+                      sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                      sock.connect(monitor)
+                      break
+                  except OSError:
+                      if sock:
+                          sock.close()
+                      time.sleep(1)
+              if sock is None:
+                  raise SystemExit("QEMU monitor did not become available")
+              sock.settimeout(3)
+              try:
+                  sock.recv(4096)
+              except OSError:
+                  pass
+              for label, delay in (("early", 25), ("late", 135)):
+                  time.sleep(delay)
+                  sock.sendall(f"screendump evidence/{label}-screen.ppm\n".encode())
+                  time.sleep(2)
+                  try:
+                      sock.recv(4096)
+                  except OSError:
+                      pass
+              if proc.poll() is not None:
+                  raise SystemExit("QEMU exited during the live boot")
+          finally:
+              if sock:
+                  sock.close()
+              proc.terminate()
+              try:
+                  proc.wait(timeout=10)
+              except subprocess.TimeoutExpired:
+                  proc.kill()
+          PY
+          WORKPRINT_ISO="$iso" xvfb-run -a python3 /tmp/boot-check.py
+          test -s evidence/early-screen.ppm
+          test -s evidence/late-screen.ppm
+
+      - name: Upload VM boot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workprint-64-vm-boot-evidence
+          path: evidence/
+          if-no-files-found: warn
+          retention-days: 14
