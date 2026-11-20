@@ -16,5 +16,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y build-essential binutils
       - name: Build freestanding x86_64 kernel ELF
         run: make CC=gcc LD=ld AS=gcc check-tools all
+      - name: Validate ELF layout
+        run: python3 tools/verify_elf.py build/workprint.elf
       - name: Inspect ELF
         run: readelf -h -l build/workprint.elf
