@@ -19,18 +19,16 @@ The current CI artifact is retained for 14 days. It is a development artifact, n
 
 - [x] Boot the ISO in QEMU using x86_64 emulation.
 - [x] Allocate 3072 MB RAM to the VM.
-- [x] Capture and inspect the guest display after boot.
-- [x] Confirm visually that the XFCE live desktop appears.
+- [x] Capture and manually inspect the guest display after boot.
+- [x] Confirm that the XFCE live desktop appears.
+- [ ] Require OCR checks for expected desktop icons in CI (new assertion added; awaiting workflow result).
+- [ ] Verify virtual network connectivity from inside the guest.
+- [ ] Verify Firefox ESR launches and loads a page.
+- [ ] Verify CUPS starts and exposes its local administration page.
+- [ ] Verify clean shutdown and reboot.
+- [ ] Test BIOS and UEFI boot modes independently.
 
-Evidence: [QEMU smoke-test run](https://github.com/magitv194-rgb/WorkPrint-64-/actions/runs/44806112856). The uploaded evidence contains early and late screenshots. The late screenshot shows the XFCE desktop with desktop icons and panel. This confirms a graphical live-session boot in this QEMU configuration, not on the target Lenovo hardware.
-
-Still to test in the VM:
-- [ ] BIOS and UEFI boot modes independently.
-- [ ] Live desktop responsiveness over an extended session.
-- [ ] Virtual network connectivity.
-- [ ] Firefox ESR launch and basic browsing.
-- [ ] CUPS startup and local administration page.
-- [ ] Clean shutdown and reboot.
+Evidence: [QEMU smoke-test run](https://github.com/magitv194-rgb/WorkPrint-64-/actions/runs/44806112856). The late screenshot shows the XFCE desktop and desktop icons. This confirms a graphical live-session boot in that QEMU configuration, not on the target Lenovo hardware.
 
 Use a disposable VM. Do not attach a physical disk or enable automatic installation.
 
