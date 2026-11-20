@@ -9,11 +9,15 @@ This plan separates build validation from boot validation and real hardware comp
 - [x] Calculate and publish a SHA-256 digest in the build log.
 - [x] Upload the ISO as the `workprint-64-amd64-iso` workflow artifact.
 - [ ] Download the artifact and independently verify its SHA-256 digest.
-- [ ] Inspect the ISO partition/boot catalog with `xorriso`.
+- [x] Inspect the ISO El Torito boot catalog with `xorriso`.
+- [x] Inspect the ISO system area with `xorriso`.
+- [x] Upload the ISO and checksum as a workflow artifact.
 
 The current CI artifact is retained for 14 days. It is a development artifact, not a release.
 
 ## 2. Virtual machine smoke test
+
+A QEMU smoke-test workflow now downloads the ISO from the successful build, boots it with 3 GB RAM and captures early/late guest-display screenshots plus serial output. A successful QEMU process and screenshot capture are only preliminary evidence; inspect the screenshots to confirm that the live desktop actually appeared.
 
 Use a disposable VM. Do not attach a physical disk or enable automatic installation.
 
