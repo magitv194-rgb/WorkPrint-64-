@@ -17,7 +17,7 @@ The current live-build configuration targets:
 - Spanish (Argentina) locale and Latin American keyboard layout.
 - A Lenovo target with 3 GB RAM, subject to confirming x86_64 CPU support.
 
-The package selection and live-build script are in `live/` and `tools/configure-live-build.sh`. A first amd64 hybrid ISO has been built and uploaded as a development artifact. It has not yet been boot-tested. See [the validation plan](TEST_PLAN.md).
+The package selection and live-build script are in `live/` and `tools/configure-live-build.sh`. The amd64 hybrid ISO builds successfully and has reached the XFCE live desktop in QEMU with 3072 MB RAM assigned. See [the validation plan](TEST_PLAN.md).
 
 ## Why this route
 
@@ -33,12 +33,14 @@ The trade-off is that WorkPrint 64 is a customized Linux distribution/remix, not
 
 1. Build and test in a disposable virtual machine.
 2. Boot the resulting live image in QEMU.
-3. Produce a live USB image.
-4. Boot the Lenovo from USB without installing or formatting its internal disk.
-5. Verify network, graphics, audio, input devices and USB.
-6. Identify the exact printer model and test real print jobs.
-7. Consider installation only after backups and a tested recovery procedure exist.
+3. Verify that the graphical live session appears.
+4. Test network, browser launch, CUPS startup and shutdown behavior.
+5. Produce a live USB image.
+6. Boot the Lenovo from USB without installing or formatting its internal disk.
+7. Verify network, graphics, audio, input devices and USB.
+8. Identify the exact printer model and test real print jobs.
+9. Consider installation only after backups and a tested recovery procedure exist.
 
 ## Current status
 
-The initial amd64 ISO build and artifact upload succeeded. The next gate is independent ISO inspection and a VM boot test. No physical Lenovo hardware or printer has yet been tested.
+The initial amd64 ISO build and artifact upload succeeded. A QEMU smoke test visually confirmed the XFCE live desktop with 3 GB RAM assigned. Network connectivity, Firefox operation, CUPS service behavior, measured memory use, physical Lenovo hardware and printer output remain unverified.
