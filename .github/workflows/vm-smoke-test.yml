@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   qemu-live-boot:
-    if: \${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -20,8 +20,8 @@ jobs:
         with:
           name: workprint-64-amd64-iso
           path: iso
-          run-id: \${{ github.event.workflow_run.id }}
-          github-token: \${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install QEMU and virtual display
         run: |
