@@ -11,7 +11,7 @@ fi
 
 lb config \
     --distribution trixie \
-    --architecture amd64 \
+    --architectures amd64 \
     --binary-images iso-hybrid \
     --archive-areas "main contrib non-free-firmware" \
     --debian-installer none \
