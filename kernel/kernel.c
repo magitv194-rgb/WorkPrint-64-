@@ -104,29 +104,49 @@ static void serial_hex64(uint64_t value)
     }
 }
 
+static const char *memory_type_name(uint64_t type)
+{
+    switch (type) {
+    case 0: return "usable";
+    case 1: return "reserved";
+    case 2: return "ACPI reclaimable";
+    case 3: return "ACPI NVS";
+    case 4: return "bad memory";
+    case 5: return "bootloader reclaimable";
+    case 6: return "kernel/modules";
+    case 7: return "framebuffer";
+    case 8: return "reserved mapped";
+    default: return "unknown";
+    }
+}
+
 static void print_memory_map(void)
 {
     struct limine_memmap_response *response = memmap_request.response;
 
     if (response == 0 || response->entries == 0) {
-        serial_write("Limine did not provide a memory map response.\n");
+        serial_write("Limine did not provide a memory map response.\\n");
         return;
     }
 
     serial_write("Memory map entry count: 0x");
     serial_hex64(response->entry_count);
-    serial_write("\n");
+    serial_write("\\n");
 
     uint64_t count = response->entry_count;
     if (count > LIMINE_MEMMAP_MAX_PRINT) {
         count = LIMINE_MEMMAP_MAX_PRINT;
-        serial_write("Memory map output capped at 128 entries.\n");
+        serial_write("Memory map output capped at 128 entries.\\n");
     }
+
+    uint64_t usable_bytes = 0;
+    uint64_t valid_ranges = 0;
+    int usable_total_overflow = 0;
 
     for (uint64_t i = 0; i < count; ++i) {
         struct limine_memmap_entry *entry = response->entries[i];
         if (entry == 0) {
-            serial_write("Memory map contains a null entry pointer.\n");
+            serial_write("Memory map contains a null entry pointer.\\n");
             break;
         }
 
@@ -136,7 +156,34 @@ static void print_memory_map(void)
         serial_hex64(entry->length);
         serial_write(" type=0x");
         serial_hex64(entry->type);
-        serial_write("\n");
+        serial_write(" (");
+        serial_write(memory_type_name(entry->type));
+        serial_write(")\\n");
+
+        if (entry->length == 0 || entry->length > UINT64_MAX - entry->base) {
+            serial_write("  WARNING: invalid or overflowing memory range; excluded from totals.\\n");
+            continue;
+        }
+
+        ++valid_ranges;
+        if (entry->type == 0 && !usable_total_overflow) {
+            if (entry->length > UINT64_MAX - usable_bytes) {
+                usable_total_overflow = 1;
+            } else {
+                usable_bytes += entry->length;
+            }
+        }
+    }
+
+    serial_write("Valid ranges inspected: 0x");
+    serial_hex64(valid_ranges);
+    serial_write("\\nUsable memory reported: ");
+    if (usable_total_overflow) {
+        serial_write("overflow (total not representable)\\n");
+    } else {
+        serial_write("0x");
+        serial_hex64(usable_bytes);
+        serial_write(" bytes\\n");
     }
 }
 
