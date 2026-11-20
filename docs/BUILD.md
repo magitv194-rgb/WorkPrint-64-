@@ -22,9 +22,7 @@ The target computer does not need Linux installed. These are development-host to
 Run:
 
 ```sh
-make check-tools
-make
-python3 tools/verify_elf.py build/workprint.elf
+make check-tools all validate
 ```
 
 Expected output: `build/workprint.elf`, followed by an ELF validation summary showing four load segments and accepted Limine request metadata.
