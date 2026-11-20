@@ -1,0 +1,3 @@
+WorkPrint 64 Linux
+Development image based on Debian GNU/Linux 13 (trixie).
+This file identifies the WorkPrint customization layer; Debian remains the base distribution.
