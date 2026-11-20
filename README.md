@@ -2,7 +2,7 @@
 
 WorkPrint 64 is an experimental x86_64 operating-system project. The goal is a lightweight desktop with a classic Windows 7-inspired appearance, a browser suitable for WhatsApp Web, and a practical printing subsystem.
 
-**Status: early development scaffold. This is not yet an installable or daily-usable operating system.** The repository currently contains a minimal kernel entry point, serial diagnostics, a higher-half ELF layout, Limine protocol base revision 6 metadata, a static ELF validator, a Limine boot menu configuration, build notes, a roadmap, and a CI build workflow. It has not yet been boot-tested in QEMU or on the target Lenovo.
+**Status: early development scaffold. This is not yet an installable or daily-usable operating system.** The repository currently contains a minimal kernel entry point, serial diagnostics including a Limine memory-map request, a higher-half ELF layout, Limine protocol base revision 6 metadata, a static ELF validator, a Limine boot menu configuration, build notes, a roadmap, and a CI build workflow. It has not yet been boot-tested in QEMU or on the target Lenovo.
 
 ## Design priorities
 
