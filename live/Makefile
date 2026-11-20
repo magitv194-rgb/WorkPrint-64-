@@ -1,6 +1,6 @@
 SHELL := /bin/sh
 LB ?= lb
-CONFIG_SCRIPT := ../tools/configure-live-build.sh
+CONFIG_SCRIPT := sh ../tools/configure-live-build.sh
 
 .PHONY: help config build clean check
 help:
