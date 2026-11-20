@@ -1,0 +1,20 @@
+name: Kernel scaffold build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-kernel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y build-essential binutils
+      - name: Build freestanding x86_64 kernel ELF
+        run: make CC=gcc LD=ld AS=gcc check-tools all
+      - name: Inspect ELF
+        run: readelf -h -l build/workprint.elf
