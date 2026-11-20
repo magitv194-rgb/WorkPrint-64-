@@ -1,6 +1,10 @@
 name: WorkPrint VM boot smoke test
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vm-smoke-test.yml'
   workflow_run:
     workflows: ["Build WorkPrint 64 ISO"]
     types: [completed]
@@ -11,16 +15,37 @@ permissions:
 
 jobs:
   qemu-live-boot:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
-      - name: Download ISO from the completed build
+      - name: Resolve successful ISO build
+        id: build
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let runId;
+            if (context.eventName === 'workflow_run') {
+              runId = context.payload.workflow_run.id;
+            } else {
+              const result = await github.rest.actions.listWorkflowRuns({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: "build-iso.yml",
+                status: "success",
+                per_page: 1
+              });
+              runId = result.data.workflow_runs[0]?.id;
+            }
+            if (!runId) core.setFailed("No successful ISO build was found.");
+            else core.setOutput("run_id", String(runId));
+
+      - name: Download ISO from the successful build
         uses: actions/download-artifact@v4
         with:
           name: workprint-64-amd64-iso
           path: iso
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ steps.build.outputs.run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install QEMU and virtual display
@@ -68,14 +93,26 @@ jobs:
                   sock.recv(4096)
               except OSError:
                   pass
-              for label, delay in (("early", 25), ("late", 135)):
-                  time.sleep(delay)
-                  sock.sendall(f"screendump evidence/{label}-screen.ppm\n".encode())
-                  time.sleep(2)
-                  try:
-                      sock.recv(4096)
-                  except OSError:
-                      pass
+              time.sleep(20)
+              sock.sendall(b"screendump evidence/early-screen.ppm\n")
+              time.sleep(2)
+              try:
+                  sock.recv(4096)
+              except OSError:
+                  pass
+              sock.sendall(b"sendkey ret\n")
+              time.sleep(2)
+              try:
+                  sock.recv(4096)
+              except OSError:
+                  pass
+              time.sleep(180)
+              sock.sendall(b"screendump evidence/late-screen.ppm\n")
+              time.sleep(2)
+              try:
+                  sock.recv(4096)
+              except OSError:
+                  pass
               if proc.poll() is not None:
                   raise SystemExit("QEMU exited during the live boot")
           finally:
