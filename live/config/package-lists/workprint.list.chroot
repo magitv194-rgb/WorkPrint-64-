@@ -1,0 +1,51 @@
+# Base and desktop
+live-boot
+live-config
+live-config-systemd
+systemd-sysv
+xfce4
+xfce4-goodies
+lightdm
+lightdm-gtk-greeter
+thunar
+network-manager
+network-manager-gnome
+wpasupplicant
+sudo
+dbus-x11
+polkitd
+udisks2
+gvfs
+gvfs-backends
+gvfs-fuse
+
+# Browser and document handling
+firefox-esr
+evince
+eog
+file-roller
+unzip
+p7zip-full
+
+# Printing stack
+cups
+cups-client
+cups-filters
+system-config-printer
+ipp-usb
+printer-driver-gutenprint
+printer-driver-brlaser
+
+# Hardware firmware and common utilities
+firmware-linux
+firmware-linux-nonfree
+firmware-misc-nonfree
+firmware-realtek
+firmware-iwlwifi
+firmware-amd-graphics
+firmware-intel-graphics
+alsa-utils
+pipewire-audio
+pavucontrol
+fonts-noto-core
+fonts-liberation
