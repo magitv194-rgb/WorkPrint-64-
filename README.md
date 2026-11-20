@@ -14,7 +14,7 @@ WorkPrint 64 is an experimental x86_64 operating-system project. The goal is a l
 
 ## Current limitations
 
-There is no desktop, browser, network stack, Wi-Fi support, USB host controller, storage driver, filesystem, printer driver, print spooler, or installer yet. The kernel currently initializes serial output and halts. The ISO recipe has not been verified with a pinned Limine release, and no boot test has passed.
+There is no desktop, browser, network stack, Wi-Fi support, USB host controller, storage driver, filesystem, printer driver, print spooler, or installer yet. If booted successfully, the kernel initializes serial output, checks the Limine base revision, prints the supplied memory map, and then halts. This runtime behaviour has not yet been verified in QEMU. The ISO recipe has not been tested with a compatible Limine binary release.
 
 ## Build and validation
 
