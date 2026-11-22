@@ -23,6 +23,7 @@ configs = {
     "live/config/includes.chroot/etc/xdg/xfce4/panel/default.xml": "xfce4-panel",
     "live/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml": "xsettings",
     "live/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml": "xfce4-desktop",
+    "live/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml": "xfce4-keyboard-shortcuts",
 }
 for relative, expected_channel in configs.items():
     path = root / relative
@@ -31,6 +32,11 @@ for relative, expected_channel in configs.items():
     channel = ET.parse(path).getroot()
     if channel.tag != "channel" or channel.get("name") != expected_channel:
         raise SystemExit(f"Invalid XFCE channel in {relative}")
+
+shortcuts = ET.parse(root / "live/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml").getroot()
+shortcut = shortcuts.find(".//property[@name='<Primary><Alt>t']")
+if shortcut is None or shortcut.get("value") != "xfce4-terminal":
+    raise SystemExit("WorkPrint Ctrl+Alt+T terminal shortcut is missing")
 
 wallpaper = root / "live/config/includes.chroot/usr/share/backgrounds/workprint/workprint-wallpaper.svg"
 if not wallpaper.is_file():
