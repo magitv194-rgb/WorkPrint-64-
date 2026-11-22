@@ -121,9 +121,13 @@ jobs:
               monitor_command("sendkey ret")
               time.sleep(180)
               monitor_command("screendump evidence/late-screen.ppm")
-              # Use WorkPrint's explicit Ctrl+Alt+T terminal shortcut.
-              subprocess.run(["xdotool", "key", "ctrl+alt+t"], check=True)
-              terminal = wait_for_terminal()
+              # Open XFCE's run dialog and launch the terminal without
+              # depending on a user-configured keyboard shortcut.
+              subprocess.run(["xdotool", "key", "alt+F2"], check=True)
+              time.sleep(3)
+              subprocess.run(["xdotool", "type", "--clearmodifiers", "xfce4-terminal"], check=True)
+              subprocess.run(["xdotool", "key", "Return"], check=True)
+              terminal = wait_for_terminal(timeout=30)
               with open("evidence/terminal-window.txt", "w") as out:
                   out.write(subprocess.check_output(
                       ["xdotool", "getwindowname", terminal], text=True
